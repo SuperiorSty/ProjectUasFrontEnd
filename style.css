@@ -1,0 +1,24 @@
+/* 1. SETUP DASAR */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* Mencegah scroll horizontal jika ada elemen overflow */
+    overflow-x: hidden; 
+}
+
+/* 2. SPA ROUTING SYSTEM (Wajib ada di commit pertama) */
+/* Secara default, semua section disembunyikan */
+section {
+    display: none;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Hanya section dengan class active-section yang muncul */
+section.active-section {
+    display: block;
+}
+
+/* Animasi sederhana saat ganti halaman */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
