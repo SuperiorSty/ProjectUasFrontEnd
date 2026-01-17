@@ -30,3 +30,23 @@ window.addEventListener('load', handleRouting);
 window.addEventListener('hashchange', handleRouting);
 
 console.log("Sistem Routing Berjalan...");
+
+function showSection(sectionId) {
+    // 1. Ambil semua section yang ada di dalam main
+    const sections = document.querySelectorAll('main > section');
+    
+    // 2. Sembunyikan semua section
+    sections.forEach(sec => {
+        sec.classList.add('hidden-section');
+        sec.classList.remove('active-section');
+    });
+
+    // 3. Ambil section tujuan berdasarkan ID
+    const activeSection = document.getElementById(sectionId);
+    
+    // 4. Tampilkan section tujuan
+    if (activeSection) {
+        activeSection.classList.remove('hidden-section');
+        activeSection.classList.add('active-section');
+    }
+}
