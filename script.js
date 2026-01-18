@@ -93,6 +93,7 @@ const formatRupiah = (number) => {
 function createCardHTML(item) {
     let percentage = (item.collected / item.target) * 100;
     if (percentage > 100) percentage = 100;
+    
     // Gunakan placeholder jika gambar error/tidak ada
     const imgSrc = item.image; 
 
