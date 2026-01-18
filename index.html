@@ -44,9 +44,8 @@
             
             <!-- GROUP KIRI: Logo + Search + Menu -->
             <div class="flex items-center flex-grow">
-                <!-- 1. LOGO IMAGE (Sesuai Request) -->
+                <!-- 1. LOGO IMAGE (KEMBALI KE VERSI LAMA) -->
                 <a href="#home" class="flex items-center mr-8">
-                    <!-- Pastikan file logo.png ada di folder assets -->
                     <img src="assets/logo.png" alt="Logo RuangPeduli" class="h-10 w-auto object-contain">
                 </a>
 
@@ -67,8 +66,9 @@
                 </div>
             </div>
 
-            <!-- GROUP KANAN: Tombol Masuk -->
-            <div>
+            <!-- GROUP KANAN: Tombol Masuk / Keluar (Dinamis dari Code Teman) -->
+            <div id="nav-auth-container">
+                <!-- Akan diisi oleh JavaScript (Login/Logout) -->
                 <a href="#login" class="inline-flex items-center justify-center px-6 py-2.5 border border-brand-600 text-brand-600 font-bold text-sm rounded-full hover:bg-brand-600 hover:text-white transition duration-300 shadow-sm">
                     Masuk
                 </a>
@@ -109,7 +109,7 @@
                 </div>
             </div>
                 
-            <!-- Hero Image (Sesuai Request dengan Efek Ambient/Blur) -->
+            <!-- Hero Image (KEMBALI KE VERSI LAMA dengan Efek Ambient/Blur) -->
             <div class="w-full relative rounded-2xl overflow-hidden shadow-2xl h-[400px] md:h-[500px] bg-gray-100 group mb-16">
                 <!-- LAYER 1: Background Ambient -->
                 <div class="absolute inset-0 z-0">
@@ -149,10 +149,14 @@
             <div class="max-w-7xl mx-auto">
                 
                 <!-- Header Halaman Explore -->
-                <div class="text-center mb-10 py-8 bg-brand-50 rounded-2xl border border-brand-100">
+                <div class="text-center mb-6 py-8 bg-brand-50 rounded-2xl border border-brand-100">
                     <h2 class="text-3xl font-bold text-gray-900 mb-2">Jelajahi Kebaikan</h2>
                     <p class="text-gray-600 max-w-2xl mx-auto px-4">Temukan ribuan kampanye terverifikasi dan salurkan bantuanmu ke tempat yang paling membutuhkan.</p>
                 </div>
+
+                <!-- [NEW] CONTAINER UNTUK ADMIN ACTIONS (Dari Code Teman) -->
+                <!-- Tombol "Buat Kampanye" akan muncul di sini jika Admin Login -->
+                <div id="admin-actions-container" class="mb-6"></div>
 
                 <!-- FILTER BAR (Sticky) -->
                 <div class="sticky top-20 z-30 bg-gray-50 py-4 mb-6">
@@ -203,7 +207,7 @@
         </section>
 
 
-        <!-- SECTION LOGIN -->
+        <!-- SECTION LOGIN (Dari Code Teman dengan ID Lengkap) -->
         <section id="login" class="hidden-section">
             <div class="flex justify-center items-center py-10">
                 <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md border border-gray-100">
@@ -211,18 +215,33 @@
                         <h2 class="text-2xl font-bold text-gray-800">Selamat Datang</h2>
                         <p class="text-sm text-gray-500 mt-2">Masuk untuk mulai berbagi kebaikan</p>
                     </div>
-                    <!-- Form Dummy -->
-                    <form onsubmit="event.preventDefault(); window.location.hash='#home';" class="space-y-6">
+                    
+                    <!-- Alert Error (Hidden by default) -->
+                    <div id="login-error" class="hidden bg-red-50 text-red-600 p-3 rounded-lg mb-4 text-sm text-center">
+                        Email atau password salah!
+                    </div>
+
+                    <!-- Form Login dengan Event Handler -->
+                    <form onsubmit="handleLogin(event)" class="space-y-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                            <input type="email" class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-brand-500" placeholder="nama@email.com">
+                            <!-- Tambahkan ID -->
+                            <input type="email" id="login-email" class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-brand-500" placeholder="example@gmail.com" required>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Kata Sandi</label>
-                            <input type="password" class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-brand-500" placeholder="••••••••">
+                            <!-- Tambahkan ID -->
+                            <input type="password" id="login-password" class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-brand-500" placeholder="••••••••" required>
                         </div>
                         <button type="submit" class="w-full py-3 px-4 rounded-lg text-white bg-brand-600 hover:bg-brand-700 font-bold shadow-md">Masuk Sekarang</button>
                     </form>
+
+                    <!-- Info Akun Demo -->
+                    <div class="mt-6 p-4 bg-gray-50 rounded-lg text-xs text-gray-500">
+                        <p class="font-bold mb-1">Akun Demo:</p>
+                        <p>Admin: admin@ruangpeduli.com / admin123</p>
+                        <p>User: user@gmail.com / user123</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -257,13 +276,14 @@
 
     </main>
 
-    <!-- FOOTER (Sesuai Request) -->
+    <!-- FOOTER (Sesuai Request: Logo Old Version) -->
     <footer class="footer-container">
         <div class="footer-content">
             <div class="container mx-auto">
                 <div class="footer-grid">
                     <!-- Brand Column -->
                     <div class="footer-brand">
+                        <!-- Mengembalikan Logo Footer Lama -->
                         <img src="assets/logo-nb.png" alt="RuangPeduli" class="footer-logo">
                         <p class="footer-description">
                             Platform penggalangan dana digital yang berfokus pada dampak sosial dan kemanusiaan di seluruh Indonesia.
