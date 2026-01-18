@@ -22,3 +22,110 @@ section.active-section {
     from { opacity: 0; transform: translateY(5px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+/* --- FOOTER STYLES --- */
+
+.footer-container {
+    background-color: #ffffff; /* Background di luar lengkungan */
+    width: 100%;
+}
+
+.footer-content {
+    background-color: #0f172a; /* Warna Navy Gelap sesuai gambar */
+    color: #d1d5db; /* Warna teks abu-abu terang (gray-300) */
+    border-top-left-radius: 50px;
+    border-top-right-radius: 50px;
+    padding: 4rem 1.5rem 3rem 1.5rem;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    margin-bottom: 4rem;
+}
+
+/* Responsif untuk Tablet & Desktop */
+@media (min-width: 768px) {
+    .footer-content {
+        padding-left: 3rem;
+        padding-right: 3rem;
+    }
+    .footer-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.footer-logo {
+    height: 4rem;
+    width: auto;
+    margin-bottom: 1rem;
+}
+
+.footer-description {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    max-width: 20rem;
+}
+
+.footer-title {
+    color: #ffffff;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1.5rem;
+}
+
+.footer-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.875rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.footer-link {
+    color: #d1d5db;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+    color: #ffffff;
+}
+
+.footer-divider {
+    border: 0;
+    border-top: 1px solid #374151; /* Warna garis pemisah */
+    margin-bottom: 2rem;
+    opacity: 0.5;
+}
+
+.footer-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .footer-bottom {
+        flex-direction: row;
+    }
+}
+
+.terms-link {
+    color: #d1d5db;
+    text-decoration: none;
+    text-transform: lowercase;
+    transition: color 0.3s ease;
+}
+
+.terms-link:hover {
+    color: #ffffff;
+}
