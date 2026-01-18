@@ -1,5 +1,4 @@
 // --- 1. DATA DUMMY (Database Sementara) ---
-// Sama seperti sebelumnya, hanya dipindah ke file terpisah
 const campaignsData = [
     {
         id: 1,
@@ -63,6 +62,24 @@ const campaignsData = [
     }
 ];
 
+// --- [BARU] DATA USER (DATABASE AKUN) ---
+const usersData = [
+    {
+        id: 1,
+        name: "Admin Super",
+        email: "admin@ruangpeduli.com",
+        password: "admin123", // Password dummy
+        role: "admin"         // KUNCI UTAMA: Role Admin
+    },
+    {
+        id: 2,
+        name: "Budi Santoso",
+        email: "user@gmail.com",
+        password: "user123",
+        role: "user"          // Role User biasa
+    }
+];
+
 // --- 2. HELPER: FORMAT RUPIAH ---
 const formatRupiah = (number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -76,13 +93,15 @@ const formatRupiah = (number) => {
 function createCardHTML(item) {
     let percentage = (item.collected / item.target) * 100;
     if (percentage > 100) percentage = 100;
+    // Gunakan placeholder jika gambar error/tidak ada
+    const imgSrc = item.image; 
 
     return `
         <div onclick="window.location.href='#detail/${item.id}'" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col h-full group cursor-pointer transform hover:-translate-y-1">
             
             <!-- Gambar Card -->
-            <div class="relative h-48 w-full overflow-hidden">
-                <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500">
+            <div class="relative h-48 w-full overflow-hidden bg-gray-200">
+                <img src="${imgSrc}" alt="${item.title}" onerror="this.src='https://via.placeholder.com/400x200?text=No+Image'" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500">
                 <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs font-bold text-brand-700 shadow-sm border border-gray-100">
                     ${item.category}
                 </div>
@@ -253,11 +272,103 @@ function handleRouting() {
     window.scrollTo(0, 0);
 }
 
-// --- 8. INITIALIZATION ---
+// --- [BARU] 8. SISTEM LOGIN & OTENTIKASI ---
+
+// Fungsi Login
+function handleLogin(event) {
+    event.preventDefault(); // Mencegah reload halaman
+    
+    const emailInput = document.getElementById('login-email').value;
+    const passInput = document.getElementById('login-password').value;
+    const errorMsg = document.getElementById('login-error');
+
+    // Cari user yang cocok
+    const foundUser = usersData.find(u => u.email === emailInput && u.password === passInput);
+
+    if (foundUser) {
+        // Simpan data user ke Local Storage
+        localStorage.setItem('currentUser', JSON.stringify(foundUser));
+        
+        // Reset form
+        document.getElementById('login-email').value = '';
+        document.getElementById('login-password').value = '';
+        errorMsg.classList.add('hidden');
+
+        // Redirect ke halaman Donasi (agar langsung lihat fitur admin)
+        window.location.hash = '#create';
+        
+        // Update UI segera
+        checkLoginStatus(); 
+    } else {
+        // Tampilkan Error
+        errorMsg.classList.remove('hidden');
+    }
+}
+
+// Fungsi Logout
+function handleLogout() {
+    if(confirm("Yakin ingin keluar?")) {
+        localStorage.removeItem('currentUser');
+        window.location.hash = '#home';
+        checkLoginStatus();
+    }
+}
+
+// Fungsi Cek Status Login & Update UI
+function checkLoginStatus() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const navContainer = document.getElementById('nav-auth-container');
+    const adminContainer = document.getElementById('admin-actions-container');
+
+    // 1. Update Navbar (Masuk vs Keluar)
+    if (currentUser) {
+        navContainer.innerHTML = `
+            <div class="flex items-center gap-3">
+                <span class="text-sm font-semibold text-gray-700 hidden md:block">Halo, ${currentUser.name}</span>
+                <button onclick="handleLogout()" class="inline-flex items-center justify-center px-5 py-2 border border-red-500 text-red-500 font-bold text-sm rounded-full hover:bg-red-50 transition duration-300 shadow-sm">
+                    Keluar
+                </button>
+            </div>
+        `;
+    } else {
+        navContainer.innerHTML = `
+            <a href="#login" class="inline-flex items-center justify-center px-6 py-2.5 border border-brand-600 text-brand-600 font-bold text-sm rounded-full hover:bg-brand-600 hover:text-white transition duration-300 shadow-sm">
+                Masuk
+            </a>
+        `;
+    }
+
+    // 2. Fitur Khusus Admin (Tombol Buat Kampanye)
+    // Cek: Apakah user login? DAN apakah role-nya admin?
+    if (currentUser && currentUser.role === 'admin') {
+        if(adminContainer) {
+            adminContainer.innerHTML = `
+                <div class="bg-gradient-to-r from-brand-600 to-brand-500 rounded-xl p-6 text-white flex flex-col md:flex-row items-center justify-between shadow-lg transform transition hover:scale-[1.01]">
+                    <div class="mb-4 md:mb-0">
+                        <h3 class="font-bold text-xl flex items-center gap-2">
+                            Mode Admin Aktif
+                        </h3>
+                        <p class="text-brand-50 text-sm opacity-90">Anda memiliki akses untuk membuat penggalangan dana baru.</p>
+                    </div>
+                    <button onclick="alert('Fitur Form Buat Kampanye akan muncul di sini!')" class="bg-white text-brand-600 font-bold py-3 px-6 rounded-lg shadow hover:bg-gray-50 transition flex items-center gap-2">
+                        <i class="fas fa-plus-circle"></i> Buat Kampanye Baru
+                    </button>
+                </div>
+            `;
+        }
+    } else {
+        // Jika bukan admin atau belum login, kosongkan container
+        if(adminContainer) adminContainer.innerHTML = '';
+    }
+}
+
+
+// --- 9. INITIALIZATION ---
 window.addEventListener('load', () => {
     handleRouting();
     renderHomeCampaigns();
     renderExploreCampaigns();
+    checkLoginStatus(); // Cek login saat pertama kali load
 });
 
 window.addEventListener('hashchange', handleRouting);

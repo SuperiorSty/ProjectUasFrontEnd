@@ -134,3 +134,8 @@ section.active-section {
 .terms-link:hover {
     color: #ffffff;
 }
+
+/* Admin Action Animation */
+#admin-actions-container {
+    animation: fadeIn 0.5s ease-out;
+}
