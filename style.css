@@ -1,38 +1,43 @@
 /* 1. SETUP DASAR */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    /* Mencegah scroll horizontal jika ada elemen overflow */
+    font-family: 'Inter', 'Segoe UI', sans-serif;
     overflow-x: hidden; 
+    scroll-behavior: smooth;
 }
 
-/* 2. SPA ROUTING SYSTEM (Wajib ada di commit pertama) */
-/* Secara default, semua section disembunyikan */
+/* 2. SPA ROUTING SYSTEM */
 section {
     display: none;
-    animation: fadeIn 0.3s ease-in-out;
+    animation: fadeIn 0.4s ease-in-out;
 }
 
-/* Hanya section dengan class active-section yang muncul */
 section.active-section {
     display: block;
 }
 
-/* Animasi sederhana saat ganti halaman */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(5px); }
+    from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* --- FOOTER STYLES --- */
+/* Styling Scrollbar untuk Filter agar rapi di Windows/Linux */
+.hide-scroll::-webkit-scrollbar {
+    display: none;
+}
+.hide-scroll {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
 
+/* --- FOOTER STYLES (Sesuai Request) --- */
 .footer-container {
     background-color: #ffffff; /* Background di luar lengkungan */
     width: 100%;
 }
 
 .footer-content {
-    background-color: #0f172a; /* Warna Navy Gelap sesuai gambar */
-    color: #d1d5db; /* Warna teks abu-abu terang (gray-300) */
+    background-color: #0f172a; /* Warna Navy Gelap */
+    color: #d1d5db; /* Warna teks abu-abu terang */
     border-top-left-radius: 50px;
     border-top-right-radius: 50px;
     padding: 4rem 1.5rem 3rem 1.5rem;
@@ -99,7 +104,7 @@ section.active-section {
 
 .footer-divider {
     border: 0;
-    border-top: 1px solid #374151; /* Warna garis pemisah */
+    border-top: 1px solid #374151;
     margin-bottom: 2rem;
     opacity: 0.5;
 }
