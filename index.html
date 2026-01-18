@@ -44,9 +44,11 @@
             
             <!-- GROUP KIRI: Logo + Search + Menu -->
             <div class="flex items-center flex-grow">
-                <!-- 1. LOGO IMAGE (KEMBALI KE VERSI LAMA) -->
+                <!-- 1. LOGO IMAGE -->
                 <a href="#home" class="flex items-center mr-8">
-                    <img src="assets/logo.png" alt="Logo RuangPeduli" class="h-10 w-auto object-contain">
+                    <!-- Placeholder Logo jika file tidak ada -->
+                    <div class="h-10 w-10 bg-brand-500 rounded-full flex items-center justify-center text-white font-bold text-xl mr-2">R</div>
+                    <span class="font-bold text-xl tracking-tight text-gray-800">Ruang<span class="text-brand-600">Peduli</span></span>
                 </a>
 
                 <!-- 2. Search Bar Global -->
@@ -66,9 +68,9 @@
                 </div>
             </div>
 
-            <!-- GROUP KANAN: Tombol Masuk / Keluar (Dinamis dari Code Teman) -->
+            <!-- GROUP KANAN: Tombol Masuk / Keluar (Dinamis) -->
             <div id="nav-auth-container">
-                <!-- Akan diisi oleh JavaScript (Login/Logout) -->
+                <!-- Akan diisi oleh JavaScript -->
                 <a href="#login" class="inline-flex items-center justify-center px-6 py-2.5 border border-brand-600 text-brand-600 font-bold text-sm rounded-full hover:bg-brand-600 hover:text-white transition duration-300 shadow-sm">
                     Masuk
                 </a>
@@ -109,17 +111,21 @@
                 </div>
             </div>
                 
-            <!-- Hero Image (KEMBALI KE VERSI LAMA dengan Efek Ambient/Blur) -->
+            <!-- Hero Image -->
             <div class="w-full relative rounded-2xl overflow-hidden shadow-2xl h-[400px] md:h-[500px] bg-gray-100 group mb-16">
                 <!-- LAYER 1: Background Ambient -->
-                <div class="absolute inset-0 z-0">
-                    <img src="assets/FotoKorban.jpeg" alt="" class="w-full h-full object-cover blur-xl scale-110 opacity-70">
-                    <div class="absolute inset-0 bg-white/20"></div>
+                <div class="absolute inset-0 z-0 bg-gray-900">
+                    <!-- Placeholder background -->
+                    <div class="w-full h-full bg-gradient-to-r from-gray-800 to-gray-900 opacity-80"></div>
                 </div>
                 <!-- LAYER 2: Gambar Utama -->
                 <div class="relative z-10 h-full w-full flex justify-center items-center p-4">
-                    <img src="assets/KorbanBencana.jpg" 
-                        alt="Hero Illustration" class="h-full w-auto object-contain rounded-lg shadow-lg hover:scale-[1.02] transition duration-500">
+                    <!-- Placeholder Image jika aset tidak ada -->
+                    <div class="text-center text-white">
+                        <i class="fas fa-hand-holding-heart text-6xl mb-4 text-brand-500"></i>
+                        <h2 class="text-2xl font-bold">Foto Hero Section</h2>
+                        <p class="text-gray-300">Tempatkan gambar banner di sini</p>
+                    </div>
                 </div>
             </div>
 
@@ -154,7 +160,7 @@
                     <p class="text-gray-600 max-w-2xl mx-auto px-4">Temukan ribuan kampanye terverifikasi dan salurkan bantuanmu ke tempat yang paling membutuhkan.</p>
                 </div>
 
-                <!-- [NEW] CONTAINER UNTUK ADMIN ACTIONS (Dari Code Teman) -->
+                <!-- [NEW] CONTAINER UNTUK ADMIN ACTIONS -->
                 <!-- Tombol "Buat Kampanye" akan muncul di sini jika Admin Login -->
                 <div id="admin-actions-container" class="mb-6"></div>
 
@@ -276,15 +282,14 @@
 
     </main>
 
-    <!-- FOOTER (Sesuai Request: Logo Old Version) -->
+    <!-- FOOTER -->
     <footer class="footer-container">
         <div class="footer-content">
             <div class="container mx-auto">
                 <div class="footer-grid">
                     <!-- Brand Column -->
                     <div class="footer-brand">
-                        <!-- Mengembalikan Logo Footer Lama -->
-                        <img src="assets/logo-nb.png" alt="RuangPeduli" class="footer-logo">
+                        <h4 class="text-white text-2xl font-bold mb-2">RuangPeduli</h4>
                         <p class="footer-description">
                             Platform penggalangan dana digital yang berfokus pada dampak sosial dan kemanusiaan di seluruh Indonesia.
                         </p>
