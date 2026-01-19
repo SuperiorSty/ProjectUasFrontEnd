@@ -9,20 +9,20 @@ let campaignsData = [
     target: 20000000,
     organizer: "UI Biology Festival",
     verified: true,
-    description:
-      "Program ini bertujuan untuk memberikan edukasi mengenai perubahan iklim kepada siswa sekolah dasar di daerah terpencil. Donasi Anda akan digunakan untuk buku, alat peraga, dan operasional relawan.",
+    isActive: true, // Dibuka (Hijau)
+    description: "Program ini bertujuan untuk memberikan edukasi mengenai perubahan iklim kepada siswa sekolah dasar di daerah terpencil.",
   },
   {
     id: 2,
     title: "Gerakan Makan Gratis di Masjid Jumat Berkah",
     image: "assets/CardPict/Sosial.png",
     category: "Sosial",
-    collected: 9800000,
+    collected: 108000000, // Tercapai 100% (Merah)
     target: 108000000,
     organizer: "Sedekah Global",
     verified: true,
-    description:
-      "Setiap hari Jumat, kami membagikan 500 porsi makan siang gratis untuk jamaah dan kaum dhuafa di sekitar masjid. Mari berbagi kebahagiaan melalui sebungkus nasi.",
+    isActive: true,
+    description: "Setiap hari Jumat, kami membagikan 500 porsi makan siang gratis untuk jamaah dan kaum dhuafa.",
   },
   {
     id: 3,
@@ -33,8 +33,8 @@ let campaignsData = [
     target: 30000000,
     organizer: "Keluarga Abah",
     verified: false,
-    description:
-      "Abah Hendra sudah 3 tahun berjuang melawan stroke. Biaya pengobatan dan terapi sangat besar. Bantuan Anda sangat berarti untuk kesembuhan Abah.",
+    isActive: false, // Ditutup (Abu-abu)
+    description: "Kampanye ini telah ditutup oleh pihak keluarga karena Abah sudah mendapatkan penanganan medis.",
   },
   {
     id: 4,
@@ -45,8 +45,8 @@ let campaignsData = [
     target: 8000000,
     organizer: "Vege Team",
     verified: true,
-    description:
-      "Membangun perpustakaan mini dan menyumbangkan alat tulis untuk anak-anak di pedalaman Sumatra yang kekurangan akses pendidikan.",
+    isActive: true,
+    description: "Membangun perpustakaan mini dan menyumbangkan alat tulis untuk anak-anak di pedalaman Sumatra.",
   },
   {
     id: 5,
@@ -57,8 +57,8 @@ let campaignsData = [
     target: 50000000,
     organizer: "Kawan Desa",
     verified: true,
-    description:
-      "Jembatan satu-satunya penghubung desa ke kota putus akibat banjir bandang. Warga kesulitan menjual hasil bumi dan anak sekolah harus menyeberang sungai deras.",
+    isActive: true,
+    description: "Jembatan satu-satunya penghubung desa ke kota putus akibat banjir bandang.",
   },
   {
     id: 6,
@@ -69,8 +69,8 @@ let campaignsData = [
     target: 15000000,
     organizer: "Yayasan Harapan",
     verified: true,
-    description:
-      "Memberikan beasiswa penuh untuk 10 anak yatim berprestasi agar bisa melanjutkan sekolah ke jenjang SMA.",
+    isActive: true,
+    description: "Memberikan beasiswa penuh untuk 10 anak yatim berprestasi.",
   },
 ];
 
@@ -108,15 +108,39 @@ function createCardHTML(item) {
   let percentage = (item.collected / item.target) * 100;
   if (percentage > 100) percentage = 100;
 
+  // 1. LOGIKA WARNA PROGRESS BAR
+  let barColorClass = "bg-brand-500"; 
+  if (item.hasOwnProperty('isActive') && !item.isActive) {
+      barColorClass = "bg-gray-500";
+  } else if (percentage >= 100) {
+      barColorClass = "bg-red-500";
+  }
+
+  // 2. [BARU] LOGIKA LABEL STATUS (POJOK KIRI ATAS)
+  let badgeText = "Dibuka";
+  let badgeClass = "bg-brand-600"; // Default Hijau/Teal
+
+  if (item.hasOwnProperty('isActive') && !item.isActive) {
+      badgeText = "Ditutup";
+      badgeClass = "bg-gray-600"; // Abu-abu
+  } else if (percentage >= 100) {
+      badgeText = "Tercapai";
+      badgeClass = "bg-red-600"; // Merah
+  }
+
   const imgSrc = item.image;
 
-  // PERBAIKAN: Menambahkan referrerpolicy="no-referrer" agar Imgur tidak memblokir gambar
   return `
         <div onclick="window.location.href='#detail/${item.id}'" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col h-full group cursor-pointer transform hover:-translate-y-1">
             
             <div class="relative h-48 w-full overflow-hidden bg-gray-200">
                 <img src="${imgSrc}" alt="${item.title}" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src='https://placehold.co/400x200?text=Gagal+Memuat+Gambar'" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500">
-                <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs font-bold text-brand-700 shadow-sm border border-gray-100">
+                
+                <div class="absolute top-3 left-3 ${badgeClass} text-white px-2 py-1 rounded text-xs font-bold shadow-md z-10 border border-white/20">
+                    ${badgeText}
+                </div>
+
+                <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs font-bold text-brand-700 shadow-sm border border-gray-100 z-10">
                     ${item.category}
                 </div>
             </div>
@@ -127,7 +151,7 @@ function createCardHTML(item) {
                 </h3>
 
                 <div class="w-full bg-gray-100 rounded-full h-2.5 mb-2 overflow-hidden">
-                    <div class="bg-brand-500 h-2.5 rounded-full transition-all duration-1000" style="width: ${percentage}%"></div>
+                    <div class="${barColorClass} h-2.5 rounded-full transition-all duration-1000" style="width: ${percentage}%"></div>
                 </div>
 
                 <div class="flex justify-between items-center text-xs text-gray-500 mb-4">
@@ -232,12 +256,31 @@ function renderDetailPage(id) {
   let percentage = (item.collected / item.target) * 100;
   if (percentage > 100) percentage = 100;
 
-  // PERBAIKAN: Menambahkan referrerpolicy="no-referrer" di sini juga
+  // LOGIKA WARNA BAR & BADGE DI DETAIL PAGE
+  let barColorClass = "bg-brand-500"; 
+  let badgeText = "Dibuka";
+  let badgeClass = "bg-brand-600";
+
+  if (item.hasOwnProperty('isActive') && !item.isActive) {
+      barColorClass = "bg-gray-500";
+      badgeText = "Ditutup";
+      badgeClass = "bg-gray-600";
+  } else if (percentage >= 100) {
+      barColorClass = "bg-red-500";
+      badgeText = "Tercapai";
+      badgeClass = "bg-red-600";
+  }
+
   container.innerHTML = `
         <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
             <div class="md:flex">
                 <div class="md:w-1/2 h-64 md:h-auto relative bg-gray-200">
                      <img src="${item.image}" alt="${item.title}" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src='https://placehold.co/600x400?text=Gagal+Memuat+Gambar'" class="w-full h-full object-cover">
+                     
+                     <div class="absolute top-4 right-4 ${badgeClass} text-white px-3 py-1 rounded-lg text-sm font-bold shadow-md z-10">
+                        ${badgeText}
+                     </div>
+
                      <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-lg text-sm font-bold text-brand-700">
                         ${item.category}
                      </div>
@@ -271,7 +314,7 @@ function renderDetailPage(id) {
                         </div>
 
                         <div class="w-full bg-gray-200 rounded-full h-3 mb-2">
-                            <div class="bg-brand-500 h-3 rounded-full transition-all duration-1000" style="width: ${percentage}%"></div>
+                            <div class="${barColorClass} h-3 rounded-full transition-all duration-1000" style="width: ${percentage}%"></div>
                         </div>
                         <p class="text-right text-xs text-gray-500 mb-6">${Math.round(percentage)}% tercapai</p>
 
@@ -317,14 +360,13 @@ if (exploreSearchInput) {
   });
 }
 
-// --- [BARU] FUNGSI PREVIEW GAMBAR ---
+// --- FUNGSI PREVIEW GAMBAR ---
 function updateImagePreview() {
   const url = document.getElementById("new-image").value.trim();
   const preview = document.getElementById("image-preview");
 
-  if (!preview) return; // Mencegah error jika elemen preview tidak ada
+  if (!preview) return; 
 
-  // PERBAIKAN: Set referrerPolicy untuk elemen preview juga
   preview.referrerPolicy = "no-referrer";
 
   if (url && url.length > 0) {
@@ -338,9 +380,8 @@ function updateImagePreview() {
 
 // --- LOGIKA FORM GALANG DANA ---
 function handleCreateCampaign(event) {
-  event.preventDefault(); // Cegah reload
+  event.preventDefault();
 
-  // Ambil data dari form dan gunakan TRIM untuk menghapus spasi berlebih
   const title = document.getElementById("new-title").value.trim();
   const category = document.getElementById("new-category").value;
   const target = parseInt(document.getElementById("new-target").value);
@@ -348,57 +389,42 @@ function handleCreateCampaign(event) {
   const imageInput = document.getElementById("new-image").value.trim();
   const description = document.getElementById("new-description").value.trim();
 
-  // Gunakan placeholder jika gambar kosong atau invalid string
   const image =
     imageInput && imageInput.length > 0
       ? imageInput
       : "https://placehold.co/600x400?text=Gambar+Kampanye";
 
-  // Buat ID baru (Max ID + 1)
   const newId =
     campaignsData.length > 0
       ? Math.max(...campaignsData.map((c) => c.id)) + 1
       : 1;
 
-  // Object Kampanye Baru
   const newCampaign = {
     id: newId,
     title: title,
     image: image,
     category: category,
-    collected: 0, // Awal 0
+    collected: 0,
     target: target,
     organizer: organizer,
-    verified: true, // Auto verified karena admin yang buat
+    verified: true,
+    isActive: true, // Default Aktif
     description: description,
   };
 
-  // Masukkan ke Database Array
   campaignsData.push(newCampaign);
-
-  // Reset Form
   event.target.reset();
-
-  // Reset Preview
   updateImagePreview();
-
-  // Redirect kembali ke halaman Explore
   window.location.hash = "#create";
-
-  // Re-render semua halaman agar data muncul
   renderExploreCampaigns();
   renderHomeCampaigns();
-
-  // Optional: Alert sukses
   alert("Kampanye berhasil dibuat!");
 }
 
 // --- SPA ROUTING ---
-// --- SPA ROUTING (Update: Support Animasi & Halaman Tentang) ---
 function handleRouting() {
   const hash = window.location.hash || "#home";
 
-  // 1. Sembunyikan semua section
   document.querySelectorAll("section").forEach((section) => {
     section.classList.remove("active-section");
     section.classList.add("hidden-section");
@@ -416,7 +442,6 @@ function handleRouting() {
   const targetSection = document.getElementById(targetSectionId);
 
   if (targetSection) {
-    // 2. PROTEKSI HALAMAN ADMIN (Tetap Pertahankan!)
     if (targetSectionId === "create-form") {
       const user = JSON.parse(localStorage.getItem("currentUser"));
       if (!user || user.role !== "admin") {
@@ -425,7 +450,6 @@ function handleRouting() {
         return;
       }
 
-      // Re-bind Event Listener untuk Preview Gambar
       setTimeout(() => {
         const imageInput = document.getElementById("new-image");
         if (imageInput) {
@@ -436,26 +460,17 @@ function handleRouting() {
 
     targetSection.classList.remove("hidden-section");
 
-    // 3. Render Detail jika ID kampanye ada
     if (targetSectionId === "detail" && campaignId) {
       renderDetailPage(campaignId);
       window.scrollTo(0, 0);
     }
 
-    // 4. TIMEOUT PENTING: Untuk memicu animasi slide-up & fade-in di CSS
-    setTimeout(() => {
-        targetSection.classList.add("active-section");
-    }, 10);
+    setTimeout(() => targetSection.classList.add("active-section"), 10);
   } else {
-    // Fallback ke Home jika halaman tidak dikenal
-    const homeSection = document.getElementById("home");
-    if (homeSection) {
-        homeSection.classList.remove("hidden-section");
-        homeSection.classList.add("active-section");
-    }
+    document.getElementById("home").classList.remove("hidden-section");
+    document.getElementById("home").classList.add("active-section");
   }
 
-  // 5. Update Navbar Active State (Warna Hijau pada Menu Aktif)
   document.querySelectorAll("nav a").forEach((link) => {
     const href = link.getAttribute("href");
     if (href === hash) {
@@ -486,9 +501,8 @@ function handleLogin(event) {
     document.getElementById("login-password").value = "";
     errorMsg.classList.add("hidden");
 
-    // Redirect
     if (foundUser.role === "admin") {
-      window.location.hash = "#create"; // Admin ke halaman donasi
+      window.location.hash = "#create";
     } else {
       window.location.hash = "#home";
     }
@@ -531,7 +545,6 @@ function checkLoginStatus() {
         `;
   }
 
-  // [MODIFIKASI] Fitur Khusus Admin - Mengarahkan ke Form
   if (currentUser && currentUser.role === "admin") {
     if (adminContainer) {
       adminContainer.innerHTML = `
