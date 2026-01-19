@@ -1,394 +1,489 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RuangPeduli - Impactful Crowdfunding</title>
-    
+
     <!-- Tailwind CSS (CDN) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#f0fdfa',
-                            100: '#ccfbf1',
-                            500: '#14b8a6', // Warna Utama (Teal/Tosca)
-                            600: '#0d9488', // Warna saat Hover
-                            700: '#0f766e',
-                            800: '#115e59', // Warna Text Gelap
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'Segoe UI', 'sans-serif'],
-                    }
-                }
-            }
-        }
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                50: "#f0fdfa",
+                100: "#ccfbf1",
+                500: "#14b8a6", // Warna Utama (Teal/Tosca)
+                600: "#0d9488", // Warna saat Hover
+                700: "#0f766e",
+                800: "#115e59", // Warna Text Gelap
+              },
+            },
+            fontFamily: {
+              sans: ["Inter", "Segoe UI", "sans-serif"],
+            },
+          },
+        },
+      };
     </script>
-    
+
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+
     <!-- Link ke Custom CSS -->
-    <link rel="stylesheet" href="style.css">
-</head>
+    <link rel="stylesheet" href="style.css" />
+  </head>
 
-<body class="flex flex-col min-h-screen bg-gray-50 text-gray-800">
-
+  <body class="flex flex-col min-h-screen bg-gray-50 text-gray-800">
     <!-- NAVBAR -->
     <nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-100">
-        <div class="container mx-auto px-4 md:px-6 h-20 flex justify-between items-center">
-            
-            <!-- GROUP KIRI: Logo + Search + Menu -->
-            <div class="flex items-center flex-grow">
-                <!-- 1. LOGO IMAGE (KEMBALI KE VERSI LAMA) -->
-                <a href="#home" class="flex items-center mr-8">
-                    <img src="assets/logo.png" alt="Logo RuangPeduli" class="h-10 w-auto object-contain">
-                </a>
+      <div
+        class="container mx-auto px-4 md:px-6 h-20 flex justify-between items-center"
+      >
+        <!-- GROUP KIRI: Logo + Search + Menu -->
+        <div class="flex items-center flex-grow">
+          <!-- 1. LOGO IMAGE (KEMBALI KE VERSI LAMA) -->
+          <a href="#home" class="flex items-center mr-8">
+            <img
+              src="assets/logo.png"
+              alt="Logo RuangPeduli"
+              class="h-10 w-auto object-contain"
+            />
+          </a>
 
-                <!-- 2. Search Bar Global -->
-                <div class="hidden md:block relative w-64 mr-6">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                        <i class="fas fa-search text-gray-400"></i>
-                    </span>
-                    <input type="text" id="global-search" placeholder="Cari kampanye..." 
-                        class="w-full py-2 pl-10 pr-4 bg-gray-100 border-transparent rounded-full text-sm focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-100 transition outline-none">
-                </div>
+          <!-- 2. Search Bar Global -->
+          <div class="hidden md:block relative w-64 mr-6">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+              <i class="fas fa-search text-gray-400"></i>
+            </span>
+            <input
+              type="text"
+              id="global-search"
+              placeholder="Cari kampanye..."
+              class="w-full py-2 pl-10 pr-4 bg-gray-100 border-transparent rounded-full text-sm focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-100 transition outline-none"
+            />
+          </div>
 
-                <!-- 3. Menu Links -->
-                <div class="hidden md:flex space-x-6 text-sm font-semibold text-gray-600">
-                    <a href="#home" class="hover:text-brand-600 transition">Beranda</a>
-                    <a href="#create" class="hover:text-brand-600 transition">Donasi</a>
-                    <a href="#about" class="hover:text-brand-600 transition">Tentang</a>
-                </div>
-            </div>
-
-            <!-- GROUP KANAN: Tombol Masuk / Keluar (Dinamis dari Code Teman) -->
-            <div id="nav-auth-container">
-                <!-- Akan diisi oleh JavaScript (Login/Logout) -->
-                <a href="#login" class="inline-flex items-center justify-center px-6 py-2.5 border border-brand-600 text-brand-600 font-bold text-sm rounded-full hover:bg-brand-600 hover:text-white transition duration-300 shadow-sm">
-                    Masuk
-                </a>
-            </div>
+          <!-- 3. Menu Links -->
+          <div
+            class="hidden md:flex space-x-6 text-sm font-semibold text-gray-600"
+          >
+            <a href="#home" class="hover:text-brand-600 transition">Beranda</a>
+            <a href="#create" class="hover:text-brand-600 transition">Donasi</a>
+            <a href="#about" class="hover:text-brand-600 transition">Tentang</a>
+          </div>
         </div>
+
+        <!-- GROUP KANAN: Tombol Masuk / Keluar (Dinamis dari Code Teman) -->
+        <div id="nav-auth-container">
+          <!-- Akan diisi oleh JavaScript (Login/Logout) -->
+          <a
+            href="#login"
+            class="inline-flex items-center justify-center px-6 py-2.5 border border-brand-600 text-brand-600 font-bold text-sm rounded-full hover:bg-brand-600 hover:text-white transition duration-300 shadow-sm"
+          >
+            Masuk
+          </a>
+        </div>
+      </div>
     </nav>
 
     <!-- MAIN CONTENT -->
     <main class="flex-grow container mx-auto px-4 md:px-6 py-8">
-
-        <!-- SECTION HOME -->
-        <section id="home" class="active-section">
-            
-            <!-- Hero Header Teks -->
-            <div class="flex flex-col lg:flex-row items-center lg:items-end justify-between mb-10 mt-6 gap-6">
-                <!-- Bagian Kiri: Judul & Deskripsi -->
-                <div class="text-center lg:text-left lg:max-w-3xl w-full">
-                    <span class="inline-block py-1 px-3 rounded-full bg-brand-50 text-brand-600 text-xs font-bold tracking-wide mb-3">
-                        PLATFORM #1 DI INDONESIA
-                    </span>
-                    <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-4">
-                        Hubungkan Niat Baik, <br class="hidden md:block" />
-                        <span class="text-brand-600">Ciptakan Dampak Nyata.</span>
-                    </h1>
-                    <p class="text-lg text-gray-500 leading-relaxed max-w-2xl mx-auto lg:mx-0">
-                        RuangPeduli mewadahi ribuan inisiatif sosial agar kamu bisa berkontribusi dengan mudah, transparan, dan tepat sasaran.
-                    </p>
-                </div>
-
-                <!-- Bagian Kanan: Tombol Aksi -->
-                <div class="flex flex-col sm:flex-row gap-4 flex-shrink-0 w-full sm:w-auto justify-center lg:justify-end">
-                    <a href="#create" class="px-8 py-3.5 bg-brand-600 text-white font-bold rounded-lg shadow-lg hover:bg-brand-700 transition hover:-translate-y-1 text-center">
-                        Donasi Sekarang
-                    </a>
-                    <a href="#about" class="px-8 py-3.5 bg-white text-gray-700 border border-gray-300 font-bold rounded-lg hover:bg-gray-50 transition text-center">
-                        Pelajari
-                    </a>
-                </div>
-            </div>
-                
-            <!-- Hero Image (KEMBALI KE VERSI LAMA dengan Efek Ambient/Blur) -->
-            <div class="w-full relative rounded-2xl overflow-hidden shadow-2xl h-[400px] md:h-[500px] bg-gray-100 group mb-16">
-                <!-- LAYER 1: Background Ambient -->
-                <div class="absolute inset-0 z-0">
-                    <img src="assets/FotoKorban.jpeg" alt="" class="w-full h-full object-cover blur-xl scale-110 opacity-70">
-                    <div class="absolute inset-0 bg-white/20"></div>
-                </div>
-                <!-- LAYER 2: Gambar Utama -->
-                <div class="relative z-10 h-full w-full flex justify-center items-center p-4">
-                    <img src="assets/KorbanBencana.jpg" 
-                        alt="Hero Illustration" class="h-full w-auto object-contain rounded-lg shadow-lg hover:scale-[1.02] transition duration-500">
-                </div>
-            </div>
-
-            <!-- Header Kampanye Trending -->
-            <div class="flex justify-between items-end mb-8">
-                <div>
-                    <h2 class="text-2xl font-bold text-gray-900">Sedang Hangat <i class="fas fa-fire text-red-500 ml-1"></i></h2>
-                    <p class="text-gray-500 mt-1">Kampanye yang paling banyak dilihat hari ini.</p>
-                </div>
-                <!-- Link ke halaman Galang Dana -->
-                <a href="#create" class="hidden md:block text-brand-600 font-bold hover:underline">Lihat Semua <i class="fas fa-arrow-right ml-1"></i></a>
-            </div>
-
-            <!-- GRID KARTU HOME (Hanya 3 data) -->
-            <div id="home-campaign-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Data di-inject via JS -->
-            </div>
-            
-            <div class="mt-8 text-center md:hidden">
-                 <a href="#create" class="text-brand-600 font-bold hover:underline">Lihat Semua Kampanye <i class="fas fa-arrow-right ml-1"></i></a>
-            </div>
-        </section>
-
-
-        <!-- SECTION CREATE / GALANG DANA (EXPLORE) -->
-        <section id="create" class="hidden-section">
-            <div class="max-w-7xl mx-auto">
-                
-                <!-- Header Halaman Explore -->
-                <div class="text-center mb-6 py-8 bg-brand-50 rounded-2xl border border-brand-100">
-                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Jelajahi Kebaikan</h2>
-                    <p class="text-gray-600 max-w-2xl mx-auto px-4">Temukan ribuan kampanye terverifikasi dan salurkan bantuanmu ke tempat yang paling membutuhkan.</p>
-                </div>
-
-                <!-- [NEW] CONTAINER UNTUK ADMIN ACTIONS (Dari Code Teman) -->
-                <!-- Tombol "Buat Kampanye" akan muncul di sini jika Admin Login -->
-                <div id="admin-actions-container" class="mb-6"></div>
-
-                <!-- FILTER BAR (Sticky) -->
-                <div class="sticky top-20 z-30 bg-gray-50 py-4 mb-6">
-                    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                        
-                        <!-- Kategori Buttons -->
-                        <div class="w-full md:w-auto overflow-x-auto hide-scroll pb-2 md:pb-0">
-                            <div class="flex space-x-2" id="filter-container">
-                                <button onclick="filterCampaigns('Semua')" class="filter-btn active px-5 py-2 rounded-full text-sm font-bold border transition whitespace-nowrap bg-brand-600 text-white border-brand-600" data-category="Semua">
-                                    Semua
-                                </button>
-                                <button onclick="filterCampaigns('Lingkungan')" class="filter-btn px-5 py-2 rounded-full text-sm font-bold border border-gray-300 text-gray-600 bg-white hover:border-brand-500 hover:text-brand-600 transition whitespace-nowrap" data-category="Lingkungan">
-                                    <i class="fas fa-leaf mr-1"></i> Lingkungan
-                                </button>
-                                <button onclick="filterCampaigns('Kesehatan')" class="filter-btn px-5 py-2 rounded-full text-sm font-bold border border-gray-300 text-gray-600 bg-white hover:border-brand-500 hover:text-brand-600 transition whitespace-nowrap" data-category="Kesehatan">
-                                    <i class="fas fa-heartbeat mr-1"></i> Kesehatan
-                                </button>
-                                <button onclick="filterCampaigns('Pendidikan')" class="filter-btn px-5 py-2 rounded-full text-sm font-bold border border-gray-300 text-gray-600 bg-white hover:border-brand-500 hover:text-brand-600 transition whitespace-nowrap" data-category="Pendidikan">
-                                    <i class="fas fa-graduation-cap mr-1"></i> Pendidikan
-                                </button>
-                                <button onclick="filterCampaigns('Sosial')" class="filter-btn px-5 py-2 rounded-full text-sm font-bold border border-gray-300 text-gray-600 bg-white hover:border-brand-500 hover:text-brand-600 transition whitespace-nowrap" data-category="Sosial">
-                                    <i class="fas fa-users mr-1"></i> Sosial
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Search Local (Khusus halaman ini) -->
-                        <div class="w-full md:w-64 relative">
-                            <input type="text" id="explore-search" placeholder="Cari di sini..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-sm">
-                            <i class="fas fa-search absolute left-3 top-2.5 text-gray-400"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- GRID SEMUA KAMPANYE -->
-                <div id="all-campaign-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[400px]">
-                    <!-- Data Rendered Here -->
-                </div>
-
-                <!-- Load More Button -->
-                <div class="text-center mt-12 mb-8">
-                    <button class="px-6 py-2 border-2 border-brand-600 text-brand-600 font-bold rounded-full hover:bg-brand-600 hover:text-white transition">
-                        Muat Lebih Banyak
-                    </button>
-                </div>
-
-            </div>
-        </section>
-
-
-        <!-- SECTION LOGIN (Dari Code Teman dengan ID Lengkap) -->
-        <section id="login" class="hidden-section">
-            <div class="flex justify-center items-center py-10">
-                <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md border border-gray-100">
-                    <div class="text-center mb-8">
-                        <h2 class="text-2xl font-bold text-gray-800">Selamat Datang</h2>
-                        <p class="text-sm text-gray-500 mt-2">Masuk untuk mulai berbagi kebaikan</p>
-                    </div>
-                    
-                    <!-- Alert Error (Hidden by default) -->
-                    <div id="login-error" class="hidden bg-red-50 text-red-600 p-3 rounded-lg mb-4 text-sm text-center">
-                        Email atau password salah!
-                    </div>
-
-                    <!-- Form Login dengan Event Handler -->
-                    <form onsubmit="handleLogin(event)" class="space-y-6">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                            <!-- Tambahkan ID -->
-                            <input type="email" id="login-email" class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-brand-500" placeholder="example@gmail.com" required>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Kata Sandi</label>
-                            <!-- Tambahkan ID -->
-                            <input type="password" id="login-password" class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-brand-500" placeholder="••••••••" required>
-                        </div>
-                        <button type="submit" class="w-full py-3 px-4 rounded-lg text-white bg-brand-600 hover:bg-brand-700 font-bold shadow-md">Masuk Sekarang</button>
-                    </form>
-
-                    <!-- Info Akun Demo -->
-                    <div class="mt-6 p-4 bg-gray-50 rounded-lg text-xs text-gray-500">
-                        <p class="font-bold mb-1">Akun Demo:</p>
-                        <p>Admin: admin@ruangpeduli.com / admin123</p>
-                        <p>User: user@gmail.com / user123</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION ABOUT -->
-        <section id="about" class="hidden-section">
-    
-    <div class="relative bg-brand-700 py-20 md:py-32 overflow-hidden">
-        <div class="absolute inset-0 opacity-20">
-            <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&q=80" 
-                 class="w-full h-full object-cover" alt="Background">
-        </div>
-        <div class="container mx-auto px-4 relative z-10 text-center text-white">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4">Tentang Ruang Peduli</h1>
-            <p class="max-w-2xl mx-auto text-lg opacity-90">
-                Menyatukan kebaikan hati untuk memberikan dampak nyata bagi masyarakat Indonesia yang membutuhkan bantuan kesehatan, pendidikan, dan sosial.
+      <!-- SECTION HOME -->
+      <section id="home" class="active-section">
+        <!-- Hero Header Teks -->
+        <div
+          class="flex flex-col lg:flex-row items-center lg:items-end justify-between mb-10 mt-6 gap-6"
+        >
+          <!-- Bagian Kiri: Judul & Deskripsi -->
+          <div class="text-center lg:text-left lg:max-w-3xl w-full">
+            <span
+              class="inline-block py-1 px-3 rounded-full bg-brand-50 text-brand-600 text-xs font-bold tracking-wide mb-3"
+            >
+              PLATFORM #1 DI INDONESIA
+            </span>
+            <h1
+              class="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-4"
+            >
+              Hubungkan Niat Baik, <br class="hidden md:block" />
+              <span class="text-brand-600">Ciptakan Dampak Nyata.</span>
+            </h1>
+            <p
+              class="text-lg text-gray-500 leading-relaxed max-w-2xl mx-auto lg:mx-0"
+            >
+              RuangPeduli mewadahi ribuan inisiatif sosial agar kamu bisa
+              berkontribusi dengan mudah, transparan, dan tepat sasaran.
             </p>
+          </div>
+
+          <!-- Bagian Kanan: Tombol Aksi -->
+          <div
+            class="flex flex-col sm:flex-row gap-4 flex-shrink-0 w-full sm:w-auto justify-center lg:justify-end"
+          >
+            <a
+              href="#create"
+              class="px-8 py-3.5 bg-brand-600 text-white font-bold rounded-lg shadow-lg hover:bg-brand-700 transition hover:-translate-y-1 text-center"
+            >
+              Donasi Sekarang
+            </a>
+            <a
+              href="#about"
+              class="px-8 py-3.5 bg-white text-gray-700 border border-gray-300 font-bold rounded-lg hover:bg-gray-50 transition text-center"
+            >
+              Pelajari
+            </a>
+          </div>
         </div>
-    </div>
 
-    <div class="py-20 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                <div class="rounded-3xl overflow-hidden shadow-2xl">
-                    <img src="assets/FotoKorban.jpeg" alt="Aktivitas Sosial" class="w-full h-64 md:h-[400px] object-cover">
+        <!-- Hero Image (KEMBALI KE VERSI LAMA dengan Efek Ambient/Blur) -->
+        <div
+          class="w-full relative rounded-2xl overflow-hidden shadow-2xl h-[400px] md:h-[500px] bg-gray-100 group mb-16"
+        >
+          <!-- LAYER 1: Background Ambient -->
+          <div class="absolute inset-0 z-0">
+            <img
+              src="assets/BerandaPict.png"
+              alt=""
+              class="w-full h-full object-cover blur-xl scale-110 opacity-70"
+            />
+            <div class="absolute inset-0 bg-white/20"></div>
+          </div>
+          <!-- LAYER 2: Gambar Utama -->
+          <div
+            class="relative z-10 h-full w-full flex justify-center items-center p-4"
+          >
+            <img
+              src="assets/BerandaPict.png"
+              alt="Hero Illustration"
+              class="h-full w-auto object-contain rounded-lg shadow-lg hover:scale-[1.02] transition duration-500"
+            />
+          </div>
+        </div>
+
+        <!-- Header Kampanye Trending -->
+        <div class="flex justify-between items-end mb-8">
+          <div>
+            <h2 class="text-2xl font-bold text-gray-900">
+              Sedang Hangat <i class="fas fa-fire text-red-500 ml-1"></i>
+            </h2>
+            <p class="text-gray-500 mt-1">
+              Kampanye yang paling banyak dilihat hari ini.
+            </p>
+          </div>
+          <!-- Link ke halaman Galang Dana -->
+          <a
+            href="#create"
+            class="hidden md:block text-brand-600 font-bold hover:underline"
+            >Lihat Semua <i class="fas fa-arrow-right ml-1"></i
+          ></a>
+        </div>
+
+        <!-- GRID KARTU HOME (Hanya 3 data) -->
+        <div
+          id="home-campaign-list"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        >
+          <!-- Data di-inject via JS -->
+        </div>
+
+        <div class="mt-8 text-center md:hidden">
+          <a href="#create" class="text-brand-600 font-bold hover:underline"
+            >Lihat Semua Kampanye <i class="fas fa-arrow-right ml-1"></i
+          ></a>
+        </div>
+      </section>
+
+      <!-- SECTION CREATE / GALANG DANA (EXPLORE) -->
+      <section id="create" class="hidden-section">
+        <div class="max-w-7xl mx-auto">
+          <!-- Header Halaman Explore -->
+          <div
+            class="text-center mb-6 py-8 bg-brand-50 rounded-2xl border border-brand-100"
+          >
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">
+              Jelajahi Kebaikan
+            </h2>
+            <p class="text-gray-600 max-w-2xl mx-auto px-4">
+              Temukan ribuan kampanye terverifikasi dan salurkan bantuanmu ke
+              tempat yang paling membutuhkan.
+            </p>
+          </div>
+
+          <!-- [NEW] CONTAINER UNTUK ADMIN ACTIONS (Dari Code Teman) -->
+          <!-- Tombol "Buat Kampanye" akan muncul di sini jika Admin Login -->
+          <div id="admin-actions-container" class="mb-6"></div>
+
+          <!-- FILTER BAR (Sticky) -->
+          <div class="sticky top-20 z-30 bg-gray-50 py-4 mb-6">
+            <div
+              class="flex flex-col md:flex-row justify-between items-center gap-4"
+            >
+              <!-- Kategori Buttons -->
+              <div
+                class="w-full md:w-auto overflow-x-auto hide-scroll pb-2 md:pb-0"
+              >
+                <div class="flex space-x-2" id="filter-container">
+                  <button
+                    onclick="filterCampaigns('Semua')"
+                    class="filter-btn active px-5 py-2 rounded-full text-sm font-bold border transition whitespace-nowrap bg-brand-600 text-white border-brand-600"
+                    data-category="Semua"
+                  >
+                    Semua
+                  </button>
+                  <button
+                    onclick="filterCampaigns('Lingkungan')"
+                    class="filter-btn px-5 py-2 rounded-full text-sm font-bold border border-gray-300 text-gray-600 bg-white hover:border-brand-500 hover:text-brand-600 transition whitespace-nowrap"
+                    data-category="Lingkungan"
+                  >
+                    <i class="fas fa-leaf mr-1"></i> Lingkungan
+                  </button>
+                  <button
+                    onclick="filterCampaigns('Kesehatan')"
+                    class="filter-btn px-5 py-2 rounded-full text-sm font-bold border border-gray-300 text-gray-600 bg-white hover:border-brand-500 hover:text-brand-600 transition whitespace-nowrap"
+                    data-category="Kesehatan"
+                  >
+                    <i class="fas fa-heartbeat mr-1"></i> Kesehatan
+                  </button>
+                  <button
+                    onclick="filterCampaigns('Pendidikan')"
+                    class="filter-btn px-5 py-2 rounded-full text-sm font-bold border border-gray-300 text-gray-600 bg-white hover:border-brand-500 hover:text-brand-600 transition whitespace-nowrap"
+                    data-category="Pendidikan"
+                  >
+                    <i class="fas fa-graduation-cap mr-1"></i> Pendidikan
+                  </button>
+                  <button
+                    onclick="filterCampaigns('Sosial')"
+                    class="filter-btn px-5 py-2 rounded-full text-sm font-bold border border-gray-300 text-gray-600 bg-white hover:border-brand-500 hover:text-brand-600 transition whitespace-nowrap"
+                    data-category="Sosial"
+                  >
+                    <i class="fas fa-users mr-1"></i> Sosial
+                  </button>
                 </div>
+              </div>
 
-                <div>
-                    <span class="text-brand-600 font-bold tracking-widest text-sm uppercase mb-2 block">VISI KAMI</span>
-                    <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight mb-6">
-                        Menjadi Jembatan Kebaikan yang Paling Terpercaya di Indonesia
-                    </h2>
-                    <p class="text-gray-600 mb-8 leading-relaxed">
-                        Ruang Peduli lahir dari keinginan kolektif untuk memastikan bahwa tidak ada satu pun orang yang merasa sendirian dalam menghadapi kesulitan hidup. Kami percaya bahwa teknologi dapat mempercepat kebaikan tersalurkan dengan cara yang lebih transparan.
-                    </p>
-
-                    <div class="space-y-6">
-                        <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center flex-shrink-0 text-brand-600">
-                                <i class="fas fa-bullseye text-xl"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-gray-900">Misi Pertama</h4>
-                                <p class="text-sm text-gray-500">Mengelola donasi secara transparan dan akuntabel kepada para donatur.</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center flex-shrink-0 text-brand-600">
-                                <i class="fas fa-users text-xl"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-gray-900">Misi Kedua</h4>
-                                <p class="text-sm text-gray-500">Membangun ekosistem relawan yang aktif dan tanggap di seluruh daerah.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+              <!-- Search Local (Khusus halaman ini) -->
+              <div class="w-full md:w-64 relative">
+                <input
+                  type="text"
+                  id="explore-search"
+                  placeholder="Cari di sini..."
+                  class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-sm"
+                />
+                <i
+                  class="fas fa-search absolute left-3 top-2.5 text-gray-400"
+                ></i>
+              </div>
             </div>
+          </div>
+
+          <!-- GRID SEMUA KAMPANYE -->
+          <div
+            id="all-campaign-list"
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[400px]"
+          >
+            <!-- Data Rendered Here -->
+          </div>
         </div>
-    </div>
+      </section>
 
-    <div class="py-20 bg-gray-50">
-        <div class="container mx-auto px-4 text-center">
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Tim di Balik Layar</h2>
-            <p class="text-gray-500 mb-12">Dibuat oleh Kelompok 7 - Projek UAS Dasar Web</p>
+      <!-- [BARU] SECTION DETAIL DONASI -->
+      <!-- Ini adalah wadah kosong yang akan diisi oleh renderDetailPage() di script.js -->
+      <section id="detail" class="hidden-section pt-10 pb-16">
+        <div class="max-w-5xl mx-auto">
+          <!-- Tombol Kembali -->
+          <a
+            href="#create"
+            class="inline-flex items-center text-gray-500 hover:text-brand-600 mb-6 font-medium transition"
+          >
+            <i class="fas fa-arrow-left mr-2"></i> Kembali ke Galang Dana
+          </a>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="team-card bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-                    <div class="w-24 h-24 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-500 text-4xl">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <h4 class="font-bold text-gray-900">Andi Pratama</h4>
-                    <p class="text-sm text-gray-400 mt-1">Ketua Kelompok</p>
+          <!-- Container Konten Detail (PENTING: ID ini harus sama dengan di JS) -->
+          <div id="detail-content">
+            <!-- Loading State (Akan hilang tertimpa data) -->
+            <div class="animate-pulse flex space-x-4">
+              <div class="flex-1 space-y-4 py-1">
+                <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                <div class="space-y-2">
+                  <div class="h-4 bg-gray-200 rounded"></div>
+                  <div class="h-4 bg-gray-200 rounded w-5/6"></div>
                 </div>
-                <div class="team-card bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-                    <div class="w-24 h-24 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-500 text-4xl">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <h4 class="font-bold text-gray-900">Siti Aminah</h4>
-                    <p class="text-sm text-gray-400 mt-1">Web Developer</p>
-                </div>
-                <div class="team-card bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-                    <div class="w-24 h-24 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-500 text-4xl">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <h4 class="font-bold text-gray-900">Budi Santoso</h4>
-                    <p class="text-sm text-gray-400 mt-1">UI/UX Designer</p>
-                </div>
-                <div class="team-card bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-                    <div class="w-24 h-24 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-500 text-4xl">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <h4 class="font-bold text-gray-900">Larasati</h4>
-                    <p class="text-sm text-gray-400 mt-1">Content Manager</p>
-                </div>
+              </div>
             </div>
+          </div>
         </div>
-    </div>
-</section>
+      </section>
 
+      <!-- SECTION LOGIN (Dari Code Teman dengan ID Lengkap) -->
+      <section id="login" class="hidden-section">
+        <div class="flex justify-center items-center py-10">
+          <div
+            class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md border border-gray-100"
+          >
+            <div class="text-center mb-8">
+              <h2 class="text-2xl font-bold text-gray-800">Selamat Datang</h2>
+              <p class="text-sm text-gray-500 mt-2">
+                Masuk untuk mulai berbagi kebaikan
+              </p>
+            </div>
+
+            <!-- Alert Error (Hidden by default) -->
+            <div
+              id="login-error"
+              class="hidden bg-red-50 text-red-600 p-3 rounded-lg mb-4 text-sm text-center"
+            >
+              Email atau password salah!
+            </div>
+
+            <!-- Form Login dengan Event Handler -->
+            <form onsubmit="handleLogin(event)" class="space-y-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Email</label
+                >
+                <!-- Tambahkan ID -->
+                <input
+                  type="email"
+                  id="login-email"
+                  class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-brand-500"
+                  placeholder="example@gmail.com"
+                  required
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Kata Sandi</label
+                >
+                <!-- Tambahkan ID -->
+                <input
+                  type="password"
+                  id="login-password"
+                  class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-brand-500"
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                class="w-full py-3 px-4 rounded-lg text-white bg-brand-600 hover:bg-brand-700 font-bold shadow-md"
+              >
+                Masuk Sekarang
+              </button>
+            </form>
+
+            <!-- Info Akun Demo -->
+            <div class="mt-6 p-4 bg-gray-50 rounded-lg text-xs text-gray-500">
+              <p class="font-bold mb-1">Akun Demo:</p>
+              <p>Admin: admin@ruangpeduli.com / admin123</p>
+              <p>User: user@gmail.com / user123</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION ABOUT -->
+      <section id="about" class="hidden-section">
+        <div class="max-w-3xl mx-auto py-16 text-center">
+          <h2 class="text-3xl font-bold text-gray-900 mb-6">
+            Tentang RuangPeduli
+          </h2>
+          <p class="text-lg text-gray-600 leading-relaxed mb-6">
+            RuangPeduli adalah platform teknologi yang menghubungkan para
+            donatur dengan individu atau organisasi yang membutuhkan pendanaan.
+            Kami percaya bahwa teknologi dapat menjembatani kebaikan tanpa
+            batas.
+          </p>
+          <!-- Icons Features -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+            <div
+              class="p-6 bg-white rounded-xl shadow-sm border border-gray-100"
+            >
+              <i class="fas fa-check-circle text-4xl text-brand-500 mb-3"></i>
+              <h3 class="font-bold text-lg">Terverifikasi</h3>
+              <p class="text-sm text-gray-500">
+                Semua penggalang dana melalui proses verifikasi ketat.
+              </p>
+            </div>
+            <div
+              class="p-6 bg-white rounded-xl shadow-sm border border-gray-100"
+            >
+              <i class="fas fa-bolt text-4xl text-yellow-500 mb-3"></i>
+              <h3 class="font-bold text-lg">Cepat</h3>
+              <p class="text-sm text-gray-500">
+                Donasi disalurkan secara real-time dan transparan.
+              </p>
+            </div>
+            <div
+              class="p-6 bg-white rounded-xl shadow-sm border border-gray-100"
+            >
+              <i class="fas fa-globe text-4xl text-blue-500 mb-3"></i>
+              <h3 class="font-bold text-lg">Luas</h3>
+              <p class="text-sm text-gray-500">
+                Menjangkau pelosok negeri dari Sabang sampai Merauke.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
 
     <!-- FOOTER (Sesuai Request: Logo Old Version) -->
     <footer class="footer-container">
-        <div class="footer-content">
-            <div class="container mx-auto">
-                <div class="footer-grid">
-                    <!-- Brand Column -->
-                    <div class="footer-brand">
-                        <!-- Mengembalikan Logo Footer Lama -->
-                        <img src="assets/logo-nb.png" alt="RuangPeduli" class="footer-logo">
-                        <p class="footer-description">
-                            Platform penggalangan dana digital yang berfokus pada dampak sosial dan kemanusiaan di seluruh Indonesia.
-                        </p>
-                    </div>
-                    <!-- Contact Column -->
-                    <div class="footer-column">
-                        <h4 class="footer-title">HUBUNGI KAMI</h4>
-                        <ul class="footer-list">
-                            <li>support@ruangpeduli@gmail.com</li>
-                            <li>(021) 1234-5678</li>
-                            <li>Jl. Raya Puputan No. 86,<br>Denpasar, Bali, Indonesia</li>
-                        </ul>
-                    </div>
-                    <!-- Social Column -->
-                    <div class="footer-column">
-                        <h4 class="footer-title">Social</h4>
-                        <ul class="footer-list">
-                            <li><a href="#" class="footer-link">Facebook</a></li>
-                            <li><a href="#" class="footer-link">Instagram</a></li>
-                            <li><a href="#" class="footer-link">Youtube</a></li>
-                            <li><a href="#" class="footer-link">Twitter</a></li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <hr class="footer-divider">
-                
-                <div class="footer-bottom">
-                    <p class="copyright">&copy; 2026 RuangPeduli Project. Seluruh hak cipta dilindungi.</p>
-                    <a href="#" class="terms-link">syarat & ketentuan</a>
-                </div>
+      <div class="footer-content">
+        <div class="container mx-auto">
+          <div class="footer-grid">
+            <!-- Brand Column -->
+            <div class="footer-brand">
+              <!-- Mengembalikan Logo Footer Lama -->
+              <img
+                src="assets/logo-nb.png"
+                alt="RuangPeduli"
+                class="footer-logo"
+              />
+              <p class="footer-description">
+                Platform penggalangan dana digital yang berfokus pada dampak
+                sosial dan kemanusiaan di seluruh Indonesia.
+              </p>
             </div>
+            <!-- Contact Column -->
+            <div class="footer-column">
+              <h4 class="footer-title">HUBUNGI KAMI</h4>
+              <ul class="footer-list">
+                <li>support@ruangpeduli@gmail.com</li>
+                <li>(021) 1234-5678</li>
+                <li>Jl. Raya Puputan No. 86,<br />Denpasar, Bali, Indonesia</li>
+              </ul>
+            </div>
+            <!-- Social Column -->
+            <div class="footer-column">
+              <h4 class="footer-title">Social</h4>
+              <ul class="footer-list">
+                <li><a href="#" class="footer-link">Facebook</a></li>
+                <li><a href="#" class="footer-link">Instagram</a></li>
+                <li><a href="#" class="footer-link">Youtube</a></li>
+                <li><a href="#" class="footer-link">Twitter</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <hr class="footer-divider" />
+
+          <div class="footer-bottom">
+            <p class="copyright">
+              &copy; 2026 RuangPeduli Project. Seluruh hak cipta dilindungi.
+            </p>
+            <a href="#" class="terms-link">syarat & ketentuan</a>
+          </div>
         </div>
+      </div>
     </footer>
 
     <!-- Link ke Script JS -->
     <script src="script.js"></script>
-</body>
+  </body>
 </html>
