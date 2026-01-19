@@ -82,7 +82,7 @@
 
         <!-- GROUP KANAN: Tombol Masuk / Keluar -->
         <div id="nav-auth-container">
-          <!-- Akan diisi oleh JavaScript (Login/Logout) -->
+          <!-- Akan diisi oleh JavaScript (Login/Logout/Dashboard) -->
           <a
             href="#login"
             class="inline-flex items-center justify-center px-6 py-2.5 border border-brand-600 text-brand-600 font-bold text-sm rounded-full hover:bg-brand-600 hover:text-white transition duration-300 shadow-sm"
@@ -148,7 +148,6 @@
           <div class="absolute inset-0 z-0">
             <img
               src="assets/BerandaPict.png"
-              onerror="this.src='https://placehold.co/1200x500/e0e7ff/4f46e5?text=RuangPeduli+Hero'"
               alt=""
               class="w-full h-full object-cover blur-xl scale-110 opacity-70"
             />
@@ -159,7 +158,6 @@
           >
             <img
               src="assets/BerandaPict.png"
-              onerror="this.src='https://placehold.co/1200x500/e0e7ff/4f46e5?text=RuangPeduli+Hero'"
               alt="Hero Illustration"
               class="h-full w-auto object-contain rounded-lg shadow-lg hover:scale-[1.02] transition duration-500"
             />
@@ -207,8 +205,8 @@
             </p>
           </div>
 
-          <!-- ADMIN ACTIONS -->
-          <div id="admin-actions-container" class="mb-6"></div>
+          <!-- ADMIN ACTIONS (DIHAPUS DARI SINI, PINDAH KE DASHBOARD) -->
+          <!-- <div id="admin-actions-container" class="mb-6"></div> -->
 
           <!-- FILTER BAR -->
           <div class="sticky top-20 z-30 bg-gray-50 py-4 mb-6">
@@ -281,13 +279,102 @@
         </div>
       </section>
 
+      <!-- [BARU] SECTION DASHBOARD (User & Admin) -->
+      <section id="dashboard" class="hidden-section pt-4 pb-16">
+        <div class="max-w-7xl mx-auto">
+          <!-- Welcome Banner -->
+          <div
+            class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8 flex flex-col md:flex-row justify-between items-center"
+          >
+            <div>
+              <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                Halo, <span id="dashboard-username" class="text-brand-600">User</span>! 👋
+              </h1>
+              <p class="text-gray-500">
+                Selamat datang di dashboard <span id="dashboard-role-label"></span>. Pantau kebaikanmu di sini.
+              </p>
+            </div>
+            <div class="mt-4 md:mt-0" id="dashboard-action-buttons">
+                <!-- Tombol aksi akan muncul via JS (Create Campaign utk Admin, dsb) -->
+            </div>
+          </div>
+
+          <!-- Stats Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <!-- Card 1 -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center">
+                <div class="w-14 h-14 rounded-full bg-brand-50 flex items-center justify-center text-brand-600 mr-4">
+                    <i class="fas fa-hand-holding-heart text-2xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 font-medium" id="stat-label-1">Total Donasi Saya</p>
+                    <h3 class="text-2xl font-bold text-gray-900" id="stat-value-1">Rp 0</h3>
+                </div>
+            </div>
+            
+            <!-- Card 2 -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center">
+                <div class="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mr-4">
+                    <i class="fas fa-bullhorn text-2xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 font-medium" id="stat-label-2">Kampanye Didukung</p>
+                    <h3 class="text-2xl font-bold text-gray-900" id="stat-value-2">0</h3>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center">
+                <div class="w-14 h-14 rounded-full bg-yellow-50 flex items-center justify-center text-yellow-600 mr-4">
+                    <i class="fas fa-star text-2xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Poin Kebaikan</p>
+                    <h3 class="text-2xl font-bold text-gray-900">1,250 XP</h3>
+                </div>
+            </div>
+          </div>
+
+          <!-- Riwayat Table -->
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+             <div class="p-6 border-b border-gray-50 flex justify-between items-center">
+                 <h3 class="font-bold text-lg text-gray-800">Riwayat Aktivitas</h3>
+                 <select class="text-sm border-gray-200 border rounded-lg px-3 py-1 text-gray-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                     <option>Semua Waktu</option>
+                     <option>Bulan Ini</option>
+                     <option>Minggu Ini</option>
+                 </select>
+             </div>
+             <div class="overflow-x-auto">
+                 <table class="w-full text-left">
+                     <thead class="bg-gray-50 text-gray-500 text-xs uppercase font-semibold">
+                         <tr>
+                             <th class="px-6 py-4">Tanggal</th>
+                             <th class="px-6 py-4">Aktivitas / Kampanye</th>
+                             <th class="px-6 py-4">Status</th>
+                             <th class="px-6 py-4 text-right">Jumlah</th>
+                         </tr>
+                     </thead>
+                     <tbody id="dashboard-history-body" class="divide-y divide-gray-50 text-sm">
+                         <!-- Data Row akan diisi JS -->
+                         <tr>
+                             <td class="px-6 py-4 text-center text-gray-400" colspan="4">Belum ada data riwayat.</td>
+                         </tr>
+                     </tbody>
+                 </table>
+             </div>
+          </div>
+
+        </div>
+      </section>
+
       <!-- SECTION FORM CREATE CAMPAIGN (ADMIN ONLY) -->
       <section id="create-form" class="hidden-section pb-16">
         <div class="max-w-3xl mx-auto">
           <!-- Header -->
           <div class="flex items-center mb-8">
             <a
-              href="#create"
+              href="#dashboard"
               class="mr-4 p-2 bg-white rounded-full hover:bg-gray-100 transition shadow-sm border border-gray-200"
             >
               <i class="fas fa-arrow-left text-gray-600"></i>
@@ -405,7 +492,7 @@
                 </button>
                 <button
                   type="button"
-                  onclick="window.location.href='#create'"
+                  onclick="window.location.href='#dashboard'"
                   class="px-6 py-3.5 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition"
                 >
                   Batal
@@ -493,99 +580,154 @@
 
       <!-- SECTION ABOUT -->
       <section id="about" class="hidden-section">
-    
-    <div class="relative bg-brand-700 py-20 md:py-32 overflow-hidden">
-        <div class="absolute inset-0 opacity-20">
-            <img src="assets/bantuan_korban.jpeg" 
-                 class="w-full h-full object-cover" alt="Background">
-        </div>
-        <div class="container mx-auto px-4 relative z-10 text-center text-white">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4">Tentang Ruang Peduli</h1>
+        <div class="relative bg-brand-700 py-20 md:py-32 overflow-hidden">
+          <div class="absolute inset-0 opacity-20">
+            <img
+              src="assets/bantuan_korban.jpeg"
+              class="w-full h-full object-cover"
+              alt="Background"
+            />
+          </div>
+          <div
+            class="container mx-auto px-4 relative z-10 text-center text-white"
+          >
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">
+              Tentang Ruang Peduli
+            </h1>
             <p class="max-w-2xl mx-auto text-lg opacity-90">
-                Menyatukan kebaikan hati untuk memberikan dampak nyata bagi masyarakat Indonesia yang membutuhkan bantuan kesehatan, pendidikan, dan sosial.
+              Menyatukan kebaikan hati untuk memberikan dampak nyata bagi
+              masyarakat Indonesia yang membutuhkan bantuan kesehatan,
+              pendidikan, dan sosial.
             </p>
+          </div>
         </div>
-    </div>
 
-    <div class="py-20 bg-white">
-        <div class="container mx-auto px-4">
+        <div class="py-20 bg-white">
+          <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                <div class="rounded-3xl overflow-hidden shadow-2xl">
-                    <img src="assets/bantuan_bencana.png" alt="Aktivitas Sosial" class="w-full h-64 md:h-[400px] object-cover">
-                </div>
+              <div class="rounded-3xl overflow-hidden shadow-2xl">
+                <img
+                  src="assets/bantuan_bencana.png"
+                  alt="Aktivitas Sosial"
+                  class="w-full h-64 md:h-[400px] object-cover"
+                />
+              </div>
 
-                <div>
-                    <span class="text-brand-600 font-bold tracking-widest text-sm uppercase mb-2 block">VISI KAMI</span>
-                    <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight mb-6">
-                        Menjadi Jembatan Kebaikan yang Paling Terpercaya di Indonesia
-                    </h2>
-                    <p class="text-gray-600 mb-8 leading-relaxed">
-                        Ruang Peduli lahir dari keinginan kolektif untuk memastikan bahwa tidak ada satu pun orang yang merasa sendirian dalam menghadapi kesulitan hidup. Kami percaya bahwa teknologi dapat mempercepat kebaikan tersalurkan dengan cara yang lebih transparan.
-                    </p>
+              <div>
+                <span
+                  class="text-brand-600 font-bold tracking-widest text-sm uppercase mb-2 block"
+                  >VISI KAMI</span
+                >
+                <h2
+                  class="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight mb-6"
+                >
+                  Menjadi Jembatan Kebaikan yang Paling Terpercaya di Indonesia
+                </h2>
+                <p class="text-gray-600 mb-8 leading-relaxed">
+                  Ruang Peduli lahir dari keinginan kolektif untuk memastikan
+                  bahwa tidak ada satu pun orang yang merasa sendirian dalam
+                  menghadapi kesulitan hidup. Kami percaya bahwa teknologi dapat
+                  mempercepat kebaikan tersalurkan dengan cara yang lebih
+                  transparan.
+                </p>
 
-                    <div class="space-y-6">
-                        <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center flex-shrink-0 text-brand-600">
-                                <i class="fas fa-bullseye text-xl"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-gray-900">Misi Pertama</h4>
-                                <p class="text-sm text-gray-500">Mengelola donasi secara transparan dan akuntabel kepada para donatur.</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center flex-shrink-0 text-brand-600">
-                                <i class="fas fa-users text-xl"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-gray-900">Misi Kedua</h4>
-                                <p class="text-sm text-gray-500">Membangun ekosistem relawan yang aktif dan tanggap di seluruh daerah.</p>
-                            </div>
-                        </div>
+                <div class="space-y-6">
+                  <div class="flex items-start gap-4">
+                    <div
+                      class="w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center flex-shrink-0 text-brand-600"
+                    >
+                      <i class="fas fa-bullseye text-xl"></i>
                     </div>
+                    <div>
+                      <h4 class="font-bold text-gray-900">Misi Pertama</h4>
+                      <p class="text-sm text-gray-500">
+                        Mengelola donasi secara transparan dan akuntabel kepada
+                        para donatur.
+                      </p>
+                    </div>
+                  </div>
+                  <div class="flex items-start gap-4">
+                    <div
+                      class="w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center flex-shrink-0 text-brand-600"
+                    >
+                      <i class="fas fa-users text-xl"></i>
+                    </div>
+                    <div>
+                      <h4 class="font-bold text-gray-900">Misi Kedua</h4>
+                      <p class="text-sm text-gray-500">
+                        Membangun ekosistem relawan yang aktif dan tanggap di
+                        seluruh daerah.
+                      </p>
+                    </div>
+                  </div>
                 </div>
+              </div>
             </div>
+          </div>
         </div>
-    </div>
 
-    <div class="py-20 bg-gray-50">
-        <div class="container mx-auto px-4 text-center">
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Tim di Balik Layar</h2>
+        <div class="py-20 bg-gray-50">
+          <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+              Tim di Balik Layar
+            </h2>
             <p class="text-gray-500 mb-12">Dibuat oleh Kelompok 1</p>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="team-card bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-                    <div class="w-24 h-24 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-500 text-4xl">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <h4 class="font-bold text-gray-900">Putu Ryan Raditya</h4>
-                    <p class="text-sm text-gray-400 mt-1">240040031</p>
+              <div
+                class="team-card bg-white p-8 rounded-2xl shadow-sm border border-gray-100"
+              >
+                <div
+                  class="w-24 h-24 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-500 text-4xl"
+                >
+                  <i class="fas fa-user"></i>
                 </div>
-                <div class="team-card bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-                    <div class="w-24 h-24 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-500 text-4xl">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <h4 class="font-bold text-gray-900">I Komang Bayu Kurniawan</h4>
-                    <p class="text-sm text-gray-400 mt-1">240040030</p>
+                <h4 class="font-bold text-gray-900">Putu Ryan Raditya</h4>
+                <p class="text-sm text-gray-400 mt-1">240040031</p>
+              </div>
+              <div
+                class="team-card bg-white p-8 rounded-2xl shadow-sm border border-gray-100"
+              >
+                <div
+                  class="w-24 h-24 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-500 text-4xl"
+                >
+                  <i class="fas fa-user"></i>
                 </div>
-                <div class="team-card bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-                    <div class="w-24 h-24 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-500 text-4xl">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <h4 class="font-bold text-gray-900">Gede Satya Devra Widyanatha </h4>
-                    <p class="text-sm text-gray-400 mt-1">240040036</p>
+                <h4 class="font-bold text-gray-900">
+                  I Komang Bayu Kurniawan
+                </h4>
+                <p class="text-sm text-gray-400 mt-1">240040030</p>
+              </div>
+              <div
+                class="team-card bg-white p-8 rounded-2xl shadow-sm border border-gray-100"
+              >
+                <div
+                  class="w-24 h-24 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-500 text-4xl"
+                >
+                  <i class="fas fa-user"></i>
                 </div>
-                <div class="team-card bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-                    <div class="w-24 h-24 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-500 text-4xl">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <h4 class="font-bold text-gray-900">I Made Agus Satria Winanta</h4>
-                    <p class="text-sm text-gray-400 mt-1">240040047</p>
+                <h4 class="font-bold text-gray-900">
+                  Gede Satya Devra Widyanatha
+                </h4>
+                <p class="text-sm text-gray-400 mt-1">240040036</p>
+              </div>
+              <div
+                class="team-card bg-white p-8 rounded-2xl shadow-sm border border-gray-100"
+              >
+                <div
+                  class="w-24 h-24 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-500 text-4xl"
+                >
+                  <i class="fas fa-user"></i>
                 </div>
+                <h4 class="font-bold text-gray-900">
+                  I Made Agus Satria Winanta
+                </h4>
+                <p class="text-sm text-gray-400 mt-1">240040047</p>
+              </div>
             </div>
+          </div>
         </div>
-    </div>
-</section>
+      </section>
     </main>
 
     <!-- FOOTER -->

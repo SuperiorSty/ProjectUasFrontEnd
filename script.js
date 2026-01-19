@@ -17,7 +17,7 @@ let campaignsData = [
     title: "Solidaritas Kemanusiaan: Hangatkan Palestina",
     image: "assets/CardPict/Palestiina.png",
     category: "Kemanusiaan",
-    collected: 500000000, // Tercapai (Merah nanti di logic)
+    collected: 500000000, 
     target: 500000000,
     organizer: "Peduli Sesama",
     verified: true,
@@ -74,6 +74,16 @@ let campaignsData = [
   },
 ];
 
+// --- [BARU] DUMMY RIWAYAT DONASI & AKTIVITAS ---
+// Ini simulasi data database transaksi
+const donationsHistory = [
+    { id: 101, userId: 2, campaignId: 1, amount: 50000, date: '2023-10-25', status: 'Berhasil' },
+    { id: 102, userId: 2, campaignId: 4, amount: 100000, date: '2023-11-02', status: 'Berhasil' },
+    { id: 103, userId: 1, campaignId: 2, amount: 1000000, date: '2023-10-15', status: 'Berhasil' }, // Admin donasi juga
+    { id: 104, userId: 2, campaignId: 3, amount: 25000, date: '2023-11-10', status: 'Pending' },
+];
+
+
 // --- DATA USER ---
 const usersData = [
   {
@@ -108,7 +118,6 @@ function createCardHTML(item) {
   let percentage = (item.collected / item.target) * 100;
   if (percentage > 100) percentage = 100;
 
-  // 1. LOGIKA WARNA PROGRESS BAR
   let barColorClass = "bg-brand-500"; 
   if (item.hasOwnProperty('isActive') && !item.isActive) {
       barColorClass = "bg-gray-500";
@@ -116,16 +125,15 @@ function createCardHTML(item) {
       barColorClass = "bg-red-500";
   }
 
-  // 2. [BARU] LOGIKA LABEL STATUS (POJOK KIRI ATAS)
   let badgeText = "Dibuka";
-  let badgeClass = "bg-brand-600"; // Default Hijau/Teal
+  let badgeClass = "bg-brand-600"; 
 
   if (item.hasOwnProperty('isActive') && !item.isActive) {
       badgeText = "Ditutup";
-      badgeClass = "bg-gray-600"; // Abu-abu
+      badgeClass = "bg-gray-600"; 
   } else if (percentage >= 100) {
       badgeText = "Tercapai";
-      badgeClass = "bg-red-600"; // Merah
+      badgeClass = "bg-red-600"; 
   }
 
   const imgSrc = item.image;
@@ -235,6 +243,110 @@ function renderExploreCampaigns() {
   });
   container.innerHTML = html;
 }
+
+// --- [BARU] RENDER DASHBOARD (LOGIC UTAMA) ---
+function renderDashboard() {
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    if (!user) return;
+
+    // 1. Set Header Info
+    document.getElementById("dashboard-username").innerText = user.name;
+    document.getElementById("dashboard-role-label").innerText = user.role === 'admin' ? "Administrator" : "Donatur";
+
+    // 2. Logic Tombol Aksi (Khusus Admin vs User)
+    const actionContainer = document.getElementById("dashboard-action-buttons");
+    if (user.role === 'admin') {
+        actionContainer.innerHTML = `
+            <div class="flex gap-3">
+                <button onclick="alert('Fitur Kelola Relawan (Segera Hadir)')" class="bg-white border border-gray-300 text-gray-700 font-bold py-2.5 px-4 rounded-lg hover:bg-gray-50 transition shadow-sm flex items-center gap-2">
+                    <i class="fas fa-users"></i> Relawan
+                </button>
+                <button onclick="window.location.hash='#create-form'" class="bg-brand-600 text-white font-bold py-2.5 px-5 rounded-lg hover:bg-brand-700 transition shadow-lg flex items-center gap-2">
+                    <i class="fas fa-plus"></i> Buat Kampanye
+                </button>
+            </div>
+        `;
+        
+        // ADMIN STATS (Global)
+        // Hitung total semua donasi di platform (mockup logic)
+        // Disini kita hitung dari campaignsData saja untuk simpelnya
+        const totalPlatformDonations = campaignsData.reduce((acc, curr) => acc + curr.collected, 0);
+        const totalCampaigns = campaignsData.length;
+
+        document.getElementById("stat-label-1").innerText = "Total Donasi Masuk";
+        document.getElementById("stat-value-1").innerText = formatRupiah(totalPlatformDonations);
+        
+        document.getElementById("stat-label-2").innerText = "Total Kampanye Aktif";
+        document.getElementById("stat-value-2").innerText = totalCampaigns;
+
+    } else {
+        // USER STATS (Pribadi)
+        actionContainer.innerHTML = `
+            <button onclick="window.location.href='#create'" class="bg-brand-600 text-white font-bold py-2.5 px-5 rounded-lg hover:bg-brand-700 transition shadow-lg flex items-center gap-2">
+                <i class="fas fa-heart"></i> Mulai Donasi
+            </button>
+        `;
+
+        // Filter donasi milik user ini
+        const myHistory = donationsHistory.filter(d => d.userId === user.id);
+        const myTotalDonations = myHistory.reduce((acc, curr) => acc + curr.amount, 0);
+        const myCampaignCount = new Set(myHistory.map(d => d.campaignId)).size; // Unique campaigns
+
+        document.getElementById("stat-label-1").innerText = "Total Donasi Saya";
+        document.getElementById("stat-value-1").innerText = formatRupiah(myTotalDonations);
+
+        document.getElementById("stat-label-2").innerText = "Kampanye Didukung";
+        document.getElementById("stat-value-2").innerText = myCampaignCount;
+    }
+
+    // 3. Render Tabel Riwayat (History)
+    const historyBody = document.getElementById("dashboard-history-body");
+    let historyData = [];
+
+    if (user.role === 'admin') {
+        // Admin lihat semua transaksi (mockup: ambil 5 terakhir dari dummy)
+        historyData = donationsHistory; 
+    } else {
+        // User lihat punya sendiri
+        historyData = donationsHistory.filter(d => d.userId === user.id);
+    }
+
+    // Sort by Date Descending
+    historyData.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    if (historyData.length === 0) {
+        historyBody.innerHTML = `<tr><td class="px-6 py-8 text-center text-gray-400" colspan="4"><i class="fas fa-inbox text-2xl mb-2 block"></i>Belum ada riwayat aktivitas.</td></tr>`;
+    } else {
+        let html = "";
+        historyData.forEach(trx => {
+            // Cari nama campaign
+            const campaign = campaignsData.find(c => c.id === trx.campaignId);
+            const campaignTitle = campaign ? campaign.title : "Kampanye Tidak Dikenal";
+            
+            // Status Color
+            let statusColor = "text-green-600 bg-green-50";
+            if (trx.status === 'Pending') statusColor = "text-yellow-600 bg-yellow-50";
+
+            html += `
+                <tr class="hover:bg-gray-50 transition">
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-500">${trx.date}</td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm font-bold text-gray-900 line-clamp-1">${campaignTitle}</div>
+                        <div class="text-xs text-gray-400">ID: #${trx.id}</div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-3 py-1 rounded-full text-xs font-bold ${statusColor}">${trx.status}</span>
+                    </td>
+                    <td class="px-6 py-4 text-right font-bold text-gray-700">
+                        ${formatRupiah(trx.amount)}
+                    </td>
+                </tr>
+            `;
+        });
+        historyBody.innerHTML = html;
+    }
+}
+
 
 // --- RENDER DETAIL PAGE ---
 function renderDetailPage(id) {
@@ -414,14 +526,15 @@ function handleCreateCampaign(event) {
 
   campaignsData.push(newCampaign);
   event.target.reset();
-  updateImagePreview();
-  window.location.hash = "#create";
+  
+  // Setelah create, kembali ke dashboard
+  window.location.hash = "#dashboard";
   renderExploreCampaigns();
   renderHomeCampaigns();
-  alert("Kampanye berhasil dibuat!");
+  alert("Kampanye berhasil dibuat! Silakan cek di Explore.");
 }
 
-// --- SPA ROUTING ---
+// --- SPA ROUTING (Diperbarui untuk Dashboard) ---
 function handleRouting() {
   const hash = window.location.hash || "#home";
 
@@ -442,20 +555,28 @@ function handleRouting() {
   const targetSection = document.getElementById(targetSectionId);
 
   if (targetSection) {
-    if (targetSectionId === "create-form") {
-      const user = JSON.parse(localStorage.getItem("currentUser"));
-      if (!user || user.role !== "admin") {
-        alert("Akses ditolak! Hanya admin yang boleh masuk.");
-        window.location.hash = "#home";
-        return;
-      }
-
-      setTimeout(() => {
-        const imageInput = document.getElementById("new-image");
-        if (imageInput) {
-          imageInput.addEventListener("input", updateImagePreview);
+    // GUARD: Cek Akses Dashboard / Create Form
+    if (targetSectionId === "dashboard" || targetSectionId === "create-form") {
+        const user = JSON.parse(localStorage.getItem("currentUser"));
+        
+        // 1. Harus Login
+        if (!user) {
+            alert("Silakan masuk terlebih dahulu untuk mengakses Dashboard.");
+            window.location.hash = "#login";
+            return;
         }
-      }, 100);
+
+        // 2. Khusus Create Form: Harus Admin
+        if (targetSectionId === "create-form" && user.role !== "admin") {
+             alert("Akses ditolak! Hanya admin yang boleh membuat kampanye.");
+             window.location.hash = "#dashboard";
+             return;
+        }
+
+        // 3. Render Dashboard jika akses diizinkan
+        if (targetSectionId === "dashboard") {
+            renderDashboard();
+        }
     }
 
     targetSection.classList.remove("hidden-section");
@@ -471,6 +592,7 @@ function handleRouting() {
     document.getElementById("home").classList.add("active-section");
   }
 
+  // Update Navbar Active Link
   document.querySelectorAll("nav a").forEach((link) => {
     const href = link.getAttribute("href");
     if (href === hash) {
@@ -501,11 +623,8 @@ function handleLogin(event) {
     document.getElementById("login-password").value = "";
     errorMsg.classList.add("hidden");
 
-    if (foundUser.role === "admin") {
-      window.location.hash = "#create";
-    } else {
-      window.location.hash = "#home";
-    }
+    // Redirect ke dashboard untuk semua user yang login
+    window.location.hash = "#dashboard";
 
     checkLoginStatus();
   } else {
@@ -524,16 +643,21 @@ function handleLogout() {
 function checkLoginStatus() {
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
   const navContainer = document.getElementById("nav-auth-container");
-  const adminContainer = document.getElementById(
-    "admin-actions-container",
-  );
 
+  // Kita hapus logika "admin-actions-container" dari sini karena tombolnya sudah pindah ke Dashboard
+  
   if (currentUser) {
     navContainer.innerHTML = `
             <div class="flex items-center gap-3">
-                <span class="text-sm font-semibold text-gray-700 hidden md:block">Halo, ${currentUser.name}</span>
-                <button onclick="handleLogout()" class="inline-flex items-center justify-center px-5 py-2 border border-red-500 text-red-500 font-bold text-sm rounded-full hover:bg-red-50 transition duration-300 shadow-sm">
-                    Keluar
+                <a href="#dashboard" class="hidden md:flex items-center gap-2 text-sm font-semibold text-gray-700 hover:text-brand-600 transition">
+                    <div class="w-8 h-8 rounded-full bg-brand-100 flex items-center justify-center text-brand-600">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <span>${currentUser.name}</span>
+                </a>
+                <button onclick="handleLogout()" class="inline-flex items-center justify-center px-4 py-2 border border-red-200 text-red-500 font-bold text-sm rounded-full hover:bg-red-50 transition duration-300 shadow-sm">
+                    <i class="fas fa-sign-out-alt md:hidden"></i>
+                    <span class="hidden md:inline">Keluar</span>
                 </button>
             </div>
         `;
@@ -543,26 +667,6 @@ function checkLoginStatus() {
                 Masuk
             </a>
         `;
-  }
-
-  if (currentUser && currentUser.role === "admin") {
-    if (adminContainer) {
-      adminContainer.innerHTML = `
-                <div class="bg-gradient-to-r from-brand-600 to-brand-500 rounded-xl p-6 text-white flex flex-col md:flex-row items-center justify-between shadow-lg transform transition hover:scale-[1.01]">
-                    <div class="mb-4 md:mb-0">
-                        <h3 class="font-bold text-xl flex items-center gap-2">
-                            Mode Admin Aktif
-                        </h3>
-                        <p class="text-brand-50 text-sm opacity-90">Anda memiliki akses untuk membuat penggalangan dana baru.</p>
-                    </div>
-                    <button onclick="window.location.href='#create-form'" class="bg-white text-brand-600 font-bold py-3 px-6 rounded-lg shadow hover:bg-gray-50 transition flex items-center gap-2">
-                        <i class="fas fa-plus-circle"></i> Buat Kampanye Baru
-                    </button>
-                </div>
-            `;
-    }
-  } else {
-    if (adminContainer) adminContainer.innerHTML = "";
   }
 }
 
