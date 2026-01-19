@@ -394,9 +394,11 @@ function handleCreateCampaign(event) {
 }
 
 // --- SPA ROUTING ---
+// --- SPA ROUTING (Update: Support Animasi & Halaman Tentang) ---
 function handleRouting() {
   const hash = window.location.hash || "#home";
 
+  // 1. Sembunyikan semua section
   document.querySelectorAll("section").forEach((section) => {
     section.classList.remove("active-section");
     section.classList.add("hidden-section");
@@ -414,7 +416,7 @@ function handleRouting() {
   const targetSection = document.getElementById(targetSectionId);
 
   if (targetSection) {
-    // PROTEKSI HALAMAN ADMIN
+    // 2. PROTEKSI HALAMAN ADMIN (Tetap Pertahankan!)
     if (targetSectionId === "create-form") {
       const user = JSON.parse(localStorage.getItem("currentUser"));
       if (!user || user.role !== "admin") {
@@ -423,7 +425,7 @@ function handleRouting() {
         return;
       }
 
-      // [UPDATE] Bind Event Listener untuk Preview Gambar saat section Form aktif
+      // Re-bind Event Listener untuk Preview Gambar
       setTimeout(() => {
         const imageInput = document.getElementById("new-image");
         if (imageInput) {
@@ -434,17 +436,26 @@ function handleRouting() {
 
     targetSection.classList.remove("hidden-section");
 
+    // 3. Render Detail jika ID kampanye ada
     if (targetSectionId === "detail" && campaignId) {
       renderDetailPage(campaignId);
       window.scrollTo(0, 0);
     }
 
-    setTimeout(() => targetSection.classList.add("active-section"), 10);
+    // 4. TIMEOUT PENTING: Untuk memicu animasi slide-up & fade-in di CSS
+    setTimeout(() => {
+        targetSection.classList.add("active-section");
+    }, 10);
   } else {
-    document.getElementById("home").classList.remove("hidden-section");
-    document.getElementById("home").classList.add("active-section");
+    // Fallback ke Home jika halaman tidak dikenal
+    const homeSection = document.getElementById("home");
+    if (homeSection) {
+        homeSection.classList.remove("hidden-section");
+        homeSection.classList.add("active-section");
+    }
   }
 
+  // 5. Update Navbar Active State (Warna Hijau pada Menu Aktif)
   document.querySelectorAll("nav a").forEach((link) => {
     const href = link.getAttribute("href");
     if (href === hash) {
