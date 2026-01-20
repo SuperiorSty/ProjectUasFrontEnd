@@ -69,38 +69,8 @@
       </div>
     </nav>
 
-          <!-- 2. Search Bar Global -->
-          <div class="hidden md:block relative w-64 mr-6">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-              <i class="fas fa-search text-gray-400"></i>
-            </span>
-            <input
-              type="text"
-              id="global-search"
-              placeholder="Cari kampanye..."
-              class="w-full py-2 pl-10 pr-4 bg-gray-100 border-transparent rounded-full text-sm focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-100 transition outline-none"
-            />
-          </div>
-
-          <!-- 3. Menu Links -->
-          <div
-            class="hidden md:flex space-x-6 text-sm font-semibold text-gray-600"
-          >
-            <a href="#home" class="hover:text-brand-600 transition">Beranda</a>
-            <a href="#create" class="hover:text-brand-600 transition">Donasi</a>
-            <!-- MENU RELAWAN -->
-            <a href="#relawan" class="hover:text-brand-600 transition">Relawan</a>
-            <a href="#about" class="hover:text-brand-600 transition">Tentang</a>
-          </div>
-        </div>
-
-        <!-- GROUP KANAN: Tombol Masuk / Keluar -->
-        
-      </div>
-    </nav>
-
     <!-- MAIN CONTENT -->
-    <main class="flex-grow container mx-auto px-4 md:px-6 py-8">
+    <main class="flex-grow container mx-auto px-4 md:px-6 py-8 mt-20">
       <!-- SECTION HOME -->
       <section id="home" class="active-section">
         <!-- Hero Header Teks -->
@@ -173,7 +143,6 @@
         </div>
 
         <!-- Header Kampanye Trending -->
-        <!-- UPDATED: Menggunakan justify-end agar tombol ke kanan setelah teks judul dihapus -->
         <div class="flex justify-end items-end mb-8">
           <a
             href="#create"
@@ -380,6 +349,12 @@
                  </div>
               </div>
 
+               <!-- Jumlah Orang (BARU) -->
+               <div>
+                  <label class="block text-sm font-bold text-gray-700 mb-2">Jumlah Relawan Dibutuhkan</label>
+                  <input type="number" id="vol-target-people" required min="1" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 outline-none" placeholder="Contoh: 50">
+               </div>
+
               <!-- URL Gambar -->
               <div>
                 <label class="block text-sm font-bold text-gray-700 mb-2"
@@ -449,7 +424,6 @@
           </div>
 
           <!-- Stats Grid -->
-          <!-- UPDATED: Mengubah md:grid-cols-3 menjadi md:grid-cols-2 agar 2 kartu sisanya seimbang/ditengah -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
             <!-- Card 1 -->
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center">
@@ -472,8 +446,28 @@
                     <h3 class="text-2xl font-bold text-gray-900" id="stat-value-2">0</h3>
                 </div>
             </div>
+          </div>
 
-            <!-- Card 3 (Poin Kebaikan) dihapus sesuai permintaan -->
+          <!-- Riwayat Relawan Table (User Only) - BARU -->
+          <div id="user-volunteer-history-section" class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-10 hidden">
+             <div class="p-6 border-b border-gray-50 flex justify-between items-center bg-blue-50">
+                 <h3 class="font-bold text-lg text-blue-800"><i class="fas fa-hands-helping mr-2"></i>Riwayat Pendaftaran Relawan</h3>
+             </div>
+             <div class="overflow-x-auto">
+                 <table class="w-full text-left">
+                     <thead class="bg-gray-50 text-gray-500 text-xs uppercase font-semibold">
+                         <tr>
+                             <th class="px-6 py-4">Tanggal Daftar</th>
+                             <th class="px-6 py-4">Kegiatan</th>
+                             <th class="px-6 py-4">Lokasi</th>
+                             <th class="px-6 py-4">Status</th>
+                         </tr>
+                     </thead>
+                     <tbody id="dashboard-volunteer-history-body" class="divide-y divide-gray-50 text-sm">
+                         <!-- Data Row akan diisi JS -->
+                     </tbody>
+                 </table>
+             </div>
           </div>
 
           <!-- Admin Management Table (Hanya Muncul untuk Admin) -->
@@ -501,10 +495,10 @@
                </div>
           </div>
 
-          <!-- Riwayat Table -->
+          <!-- Riwayat Donasi Table -->
           <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
              <div class="p-6 border-b border-gray-50 flex justify-between items-center">
-                 <h3 class="font-bold text-lg text-gray-800">Riwayat Aktivitas</h3>
+                 <h3 class="font-bold text-lg text-gray-800">Riwayat Donasi</h3>
                  <select class="text-sm border-gray-200 border rounded-lg px-3 py-1 text-gray-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
                      <option>Semua Waktu</option>
                      <option>Bulan Ini</option>
@@ -944,80 +938,251 @@
     </footer>
 
     <!-- 4. MODALS Area -->
-    <!-- Donation Modal -->
-    <div id="donation-modal" class="fixed inset-0 z-[60] hidden overflow-y-auto">
-      <div class="flex items-center justify-center min-h-screen px-4 text-center">
-        <div class="fixed inset-0 transition-opacity bg-gray-900 bg-opacity-75" onclick="closeDonationModal()"></div>
-        <div class="inline-block w-full max-w-lg overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl z-10 p-6">
-          <h3 class="text-xl font-bold text-gray-900 mb-4 text-center" id="modal-title">Donasi Sekarang</h3>
-          <p class="mb-4 text-sm font-medium text-gray-500 text-center" id="modal-campaign-title">Campaign Title Here</p>
-          <form id="donation-form" onsubmit="handleDonationPayment(event)">
-            <div class="mb-4">
-              <label class="block text-sm font-bold text-gray-700 mb-2">Nominal (Rp)</label>
-              <input type="number" id="donation-amount" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand-500 outline-none" placeholder="Contoh: 50000">
+    
+    <!-- Custom Alert Modal (NEW) -->
+    <div id="custom-alert-modal" class="fixed inset-0 z-[70] hidden overflow-y-auto">
+        <div class="fixed inset-0 transition-opacity bg-gray-900/60 backdrop-blur-sm" onclick="closeCustomAlert()"></div>
+        <div class="flex items-center justify-center min-h-screen px-4 text-center">
+            <div class="inline-block w-full max-w-sm overflow-hidden text-center align-middle transition-all transform bg-white shadow-2xl rounded-3xl z-10 relative p-6">
+                
+                <div class="mb-4">
+                    <!-- ICON DIUBAH JADI CENTANG HIJAU -->
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 text-green-600 mb-4">
+                        <i class="fas fa-check-circle text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900" id="alert-title">Info</h3>
+                    <div class="mt-2">
+                        <p class="text-sm text-gray-500" id="alert-message">Pesan alert di sini</p>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <button onclick="closeCustomAlert()" class="w-full inline-flex justify-center px-4 py-2 text-sm font-bold text-white bg-brand-600 border border-transparent rounded-xl hover:bg-brand-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-500 transition">
+                        OK, Mengerti
+                    </button>
+                </div>
             </div>
-            <div class="mb-4">
-              <label class="block text-sm font-bold text-gray-700 mb-2">Metode</label>
-              <select id="payment-method" class="w-full px-4 py-2 border rounded-lg outline-none">
-                <option value="">Pilih Metode</option>
-                <option value="Transfer Bank (BCA)">Transfer Bank (BCA)</option>
-                <option value="Transfer Bank (Mandiri)">Transfer Bank (Mandiri)</option>
-                <option value="GoPay">GoPay</option>
-                <option value="OVO">OVO</option>
-                <option value="Dana">Dana</option>
-              </select>
-            </div>
-            <div class="mb-4">
-              <label class="block text-sm font-bold text-gray-700 mb-2">Nama (Opsional)</label>
-              <input type="text" id="donor-name" class="w-full px-4 py-2 border rounded-lg outline-none" placeholder="Hamba Allah">
-            </div>
-            <div class="mb-4">
-              <label class="block text-sm font-bold text-gray-700 mb-2">Pesan/Doa (Opsional)</label>
-              <textarea id="donor-message" class="w-full px-4 py-2 border rounded-lg outline-none" placeholder="Tulis doa terbaikmu..."></textarea>
-            </div>
-            <div class="flex flex-col sm:flex-row-reverse gap-3 mt-6">
-              <button type="submit" class="w-full bg-brand-600 text-white font-bold py-3 rounded-xl hover:bg-brand-700 transition">Bayar Sekarang</button>
-              <button type="button" onclick="closeDonationModal()" class="w-full bg-white text-gray-700 border border-gray-300 font-bold py-3 rounded-xl hover:bg-gray-50 transition">Batal</button>
-            </div>
-          </form>
         </div>
-      </div>
     </div>
 
-    <!-- Volunteer Modal -->
-    <div id="volunteer-modal" class="fixed inset-0 z-[60] hidden overflow-y-auto">
-      <div class="flex items-center justify-center min-h-screen px-4 text-center">
-        <div class="fixed inset-0 transition-opacity bg-gray-900 bg-opacity-75" onclick="closeVolunteerModal()"></div>
-        <div class="inline-block w-full max-w-lg overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl z-10 p-6">
-          <h3 class="text-xl font-bold text-gray-900 mb-4">Daftar Jadi Relawan</h3>
-          <div class="p-4 mb-4 bg-blue-50 rounded-lg border border-blue-100">
-            <h4 id="vol-modal-title" class="font-bold text-blue-800 text-sm mb-1">Judul Kegiatan</h4>
-            <p class="text-xs text-blue-600"><i class="fas fa-map-marker-alt mr-1"></i> <span id="vol-modal-location">Lokasi</span></p>
-          </div>
-          <form id="volunteer-form" onsubmit="handleVolunteerSubmit(event)">
-            <div class="space-y-4 text-left">
-              <div>
-                <label class="block text-sm font-bold text-gray-700 mb-1">Nama Lengkap</label>
-                <input type="text" id="vol-name" placeholder="Nama sesuai KTP" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-brand-500">
-              </div>
-              <div>
-                <label class="block text-sm font-bold text-gray-700 mb-1">Alamat Email</label>
-                <input type="email" id="vol-email" placeholder="email@contoh.com" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-brand-500">
-              </div>
-              <div>
-                <label class="block text-sm font-bold text-gray-700 mb-1">Nomor Telepon / WhatsApp</label>
-                <input type="tel" id="vol-phone" placeholder="Contoh: 08123456789" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-brand-500">
-              </div>
-              <div>
-                <label class="block text-sm font-bold text-gray-700 mb-1">Alamat Rumah</label>
-                <textarea id="vol-address" placeholder="Alamat lengkap domisili saat ini..." required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-brand-500"></textarea>
-              </div>
+    <!-- Custom Confirm Modal (NEW) -->
+    <div id="custom-confirm-modal" class="fixed inset-0 z-[70] hidden overflow-y-auto">
+        <div class="fixed inset-0 transition-opacity bg-gray-900/60 backdrop-blur-sm" onclick="closeCustomConfirm(false)"></div>
+        <div class="flex items-center justify-center min-h-screen px-4 text-center">
+            <div class="inline-block w-full max-w-sm overflow-hidden text-center align-middle transition-all transform bg-white shadow-2xl rounded-3xl z-10 relative p-6">
+                
+                <div class="mb-4">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 text-yellow-600 mb-4">
+                        <i class="fas fa-exclamation-triangle text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900" id="confirm-title">Konfirmasi</h3>
+                    <div class="mt-2">
+                        <p class="text-sm text-gray-500" id="confirm-message">Apakah Anda yakin?</p>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex gap-3 justify-center">
+                    <button id="confirm-no-btn" class="flex-1 inline-flex justify-center px-4 py-2 text-sm font-bold text-gray-700 bg-gray-100 border border-transparent rounded-xl hover:bg-gray-200 focus:outline-none transition">
+                        Batal
+                    </button>
+                    <button id="confirm-yes-btn" class="flex-1 inline-flex justify-center px-4 py-2 text-sm font-bold text-white bg-red-600 border border-transparent rounded-xl hover:bg-red-700 focus:outline-none transition">
+                        Ya, Lanjutkan
+                    </button>
+                </div>
             </div>
-            <button type="submit" class="w-full mt-6 bg-blue-600 text-white font-bold py-3.5 rounded-xl shadow-lg hover:bg-blue-700 transition">Kirim Pendaftaran</button>
-          </form>
         </div>
-      </div>
     </div>
+
+    <!-- Donation Modal (Beautified) -->
+    <div id="donation-modal" class="fixed inset-0 z-[60] hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <!-- Backdrop Blur -->
+        <div class="fixed inset-0 transition-opacity bg-gray-900/60 backdrop-blur-sm" onclick="closeDonationModal()"></div>
+      
+        <div class="flex items-center justify-center min-h-screen px-4 text-center">
+            <div class="inline-block w-full max-w-lg overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-3xl z-10 scale-100 relative">
+                
+                <!-- Close Button -->
+                <button onclick="closeDonationModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition bg-gray-100 hover:bg-gray-200 rounded-full p-2 w-8 h-8 flex items-center justify-center">
+                    <i class="fas fa-times"></i>
+                </button>
+
+                <!-- Modal Header -->
+                <div class="bg-gradient-to-r from-brand-600 to-brand-500 p-6 text-white relative overflow-hidden">
+                    <div class="absolute top-0 right-0 opacity-10 transform translate-x-4 -translate-y-4">
+                        <i class="fas fa-hand-holding-heart text-9xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-1" id="modal-title">Donasi Sekarang</h3>
+                    <p class="text-brand-100 text-sm font-medium pr-8" id="modal-campaign-title">Campaign Title Here</p>
+                </div>
+
+                <div class="p-8">
+                    <form id="donation-form" onsubmit="handleDonationPayment(event)">
+                        <div class="space-y-5">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Nominal Donasi (Rp)</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-500 font-bold">Rp</span>
+                                    <input type="number" id="donation-amount" required class="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition font-semibold text-lg" placeholder="0">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Metode Pembayaran</label>
+                                <div class="relative">
+                                    <select id="payment-method" class="w-full pl-4 pr-10 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none appearance-none transition text-gray-700 font-medium">
+                                        <option value="">Pilih Metode Pembayaran</option>
+                                        <option value="Transfer Bank (BCA)">Transfer Bank (BCA)</option>
+                                        <option value="Transfer Bank (Mandiri)">Transfer Bank (Mandiri)</option>
+                                        <option value="GoPay">GoPay</option>
+                                        <option value="OVO">OVO</option>
+                                        <option value="Dana">Dana</option>
+                                    </select>
+                                    <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-gray-500">
+                                        <i class="fas fa-chevron-down text-xs"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 gap-5">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Nama (Opsional)</label>
+                                    <input type="text" id="donor-name" class="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition" placeholder="Hamba Allah">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Pesan / Doa</label>
+                                <textarea id="donor-message" rows="3" class="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition" placeholder="Tulis doa terbaikmu di sini..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 pt-4 border-t border-gray-100 flex flex-col sm:flex-row-reverse gap-3">
+                            <button type="submit" class="w-full sm:w-1/2 bg-brand-600 text-white font-bold py-3.5 rounded-xl hover:bg-brand-700 transition shadow-lg shadow-brand-200 transform active:scale-95">Bayar Sekarang</button>
+                            <button type="button" onclick="closeDonationModal()" class="w-full sm:w-1/2 bg-white text-gray-600 border border-gray-200 font-bold py-3.5 rounded-xl hover:bg-gray-50 transition">Batal</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Volunteer Modal (Beautified) -->
+    <div id="volunteer-modal" class="fixed inset-0 z-[60] hidden overflow-y-auto">
+        <div class="fixed inset-0 transition-opacity bg-gray-900/60 backdrop-blur-sm" onclick="closeVolunteerModal()"></div>
+        
+        <div class="flex items-center justify-center min-h-screen px-4 text-center">
+            <div class="inline-block w-full max-w-lg overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-3xl z-10 relative">
+                 
+                 <!-- Close Button -->
+                 <button onclick="closeVolunteerModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition bg-gray-100 hover:bg-gray-200 rounded-full p-2 w-8 h-8 flex items-center justify-center z-20">
+                    <i class="fas fa-times"></i>
+                </button>
+
+                <!-- Header Image/Color -->
+                <div class="bg-blue-600 p-6 text-white relative overflow-hidden">
+                    <div class="absolute -right-6 -top-6 text-white opacity-10">
+                        <i class="fas fa-hands-helping text-9xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold relative z-10">Daftar Jadi Relawan</h3>
+                    <p class="text-blue-100 text-sm relative z-10">Bergabunglah dalam aksi kebaikan.</p>
+                </div>
+
+                <div class="p-8 pt-6">
+                    <!-- Campaign Info Snippet -->
+                    <div class="flex items-start gap-4 p-4 mb-6 bg-blue-50 rounded-xl border border-blue-100">
+                        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 shrink-0">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                        <div>
+                            <h4 id="vol-modal-title" class="font-bold text-gray-800 text-sm">Judul Kegiatan</h4>
+                            <p class="text-xs text-gray-500 mt-1"><i class="fas fa-map-marker-alt mr-1 text-red-400"></i> <span id="vol-modal-location">Lokasi</span></p>
+                        </div>
+                    </div>
+
+                    <form id="volunteer-form" onsubmit="handleVolunteerSubmit(event)">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Nama Lengkap</label>
+                                <input type="text" id="vol-name" placeholder="Nama sesuai KTP" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Email</label>
+                                <input type="email" id="vol-email" placeholder="email@contoh.com" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">No. WhatsApp</label>
+                                <input type="tel" id="vol-phone" placeholder="0812..." required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Alamat Domisili</label>
+                                <textarea id="vol-address" rows="2" placeholder="Alamat lengkap..." required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition"></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8">
+                            <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3.5 rounded-xl shadow-lg hover:bg-blue-700 transition transform active:scale-95">Kirim Pendaftaran</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Campaign Modal (Beautified) -->
+    <div id="edit-campaign-modal" class="fixed inset-0 z-[65] hidden overflow-y-auto">
+        <div class="fixed inset-0 transition-opacity bg-gray-900/60 backdrop-blur-sm" onclick="closeEditCampaignModal()"></div>
+        
+        <div class="flex items-center justify-center min-h-screen px-4 text-center">
+            <div class="inline-block w-full max-w-xl overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-3xl z-10 relative">
+                
+                <button onclick="closeEditCampaignModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition bg-gray-100 hover:bg-gray-200 rounded-full p-2 w-8 h-8 flex items-center justify-center z-20">
+                    <i class="fas fa-times"></i>
+                </button>
+
+                <div class="bg-gray-800 p-6 text-white border-b border-gray-700">
+                    <h3 class="text-xl font-bold"><i class="fas fa-edit mr-2 text-gray-400"></i> Edit Kampanye</h3>
+                    <p class="text-gray-400 text-sm mt-1">Perbarui informasi kampanye di sini.</p>
+                </div>
+
+                <div class="p-8">
+                    <form id="edit-campaign-form" onsubmit="handleUpdateCampaign(event)">
+                        <input type="hidden" id="edit-campaign-id">
+                        <input type="hidden" id="edit-campaign-type">
+                        
+                        <div class="space-y-5">
+                            <!-- Judul -->
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Judul Kampanye</label>
+                                <input type="text" id="edit-title" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-gray-500 outline-none transition font-semibold text-gray-800">
+                            </div>
+
+                             <!-- Jumlah Donasi Tercapai (Hanya muncul untuk donasi) -->
+                             <div id="edit-collected-container">
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Donasi Terkumpul (Rp)</label>
+                                <div class="relative">
+                                     <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400 font-bold">Rp</span>
+                                    <input type="number" id="edit-collected" class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-gray-500 outline-none transition text-gray-800">
+                                </div>
+                                <p class="text-[11px] text-gray-400 mt-1.5 flex items-center"><i class="fas fa-info-circle mr-1"></i> Update manual jika ada donasi offline.</p>
+                            </div>
+
+                            <!-- Deskripsi -->
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Deskripsi</label>
+                                <textarea id="edit-description" rows="5" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-gray-500 outline-none transition text-sm leading-relaxed"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 pt-6 border-t border-gray-100 flex flex-col sm:flex-row-reverse gap-3">
+                            <button type="submit" class="w-full sm:w-auto px-8 bg-gray-800 text-white font-bold py-3 rounded-xl hover:bg-gray-900 transition shadow-lg transform active:scale-95">Simpan Perubahan</button>
+                            <button type="button" onclick="closeEditCampaignModal()" class="w-full sm:w-auto px-6 bg-white text-gray-600 border border-gray-200 font-bold py-3 rounded-xl hover:bg-gray-50 transition">Batal</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Link ke Script JS -->
     <script src="script.js"></script>

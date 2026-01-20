@@ -100,8 +100,8 @@ let volunteerCampaigns = [
 // Data Pendaftar Relawan (Applicants)
 // Structure Updated: Added email, address
 let volunteerApplicants = [
-    { id: 1, campaignId: 201, userId: 2, name: "Budi Santoso", email: "user@gmail.com", contact: "08123456789", address: "Jl. Merdeka No 1", status: "Pending" },
-    { id: 2, campaignId: 202, userId: 2, name: "Budi Santoso", email: "user@gmail.com", contact: "08123456789", address: "Jl. Merdeka No 1", status: "Diterima" }
+    { id: 1, campaignId: 201, userId: 2, name: "Budi Santoso", email: "user@gmail.com", contact: "08123456789", address: "Jl. Merdeka No 1", appliedDate: "2023-11-01", status: "Pending" },
+    { id: 2, campaignId: 202, userId: 2, name: "Budi Santoso", email: "user@gmail.com", contact: "08123456789", address: "Jl. Merdeka No 1", appliedDate: "2023-10-28", status: "Diterima" }
 ];
 
 
@@ -132,6 +132,70 @@ const usersData = [
     role: "user",
   },
 ];
+
+// --- [BARU] CUSTOM ALERT & CONFIRM LOGIC ---
+let alertCallback = null;
+
+function showCustomAlert(message, title = "Info", callback = null) {
+    const modal = document.getElementById('custom-alert-modal');
+    document.getElementById('alert-title').innerText = title;
+    document.getElementById('alert-message').innerText = message;
+    alertCallback = callback; // Simpan callback untuk dijalankan saat tutup
+    modal.classList.remove('hidden');
+}
+
+function closeCustomAlert() {
+    document.getElementById('custom-alert-modal').classList.add('hidden');
+    // Jika ada callback yang disimpan, jalankan sekarang
+    if (alertCallback) {
+        alertCallback();
+        alertCallback = null; // Reset
+    }
+}
+
+let confirmCallback = null;
+
+function showCustomConfirm(message, onConfirm, title = "Konfirmasi") {
+    const modal = document.getElementById('custom-confirm-modal');
+    document.getElementById('confirm-title').innerText = title;
+    document.getElementById('confirm-message').innerText = message;
+    
+    // Set callback global
+    confirmCallback = onConfirm;
+    
+    // Remove existing event listeners to prevent multiple firings
+    const yesBtn = document.getElementById('confirm-yes-btn');
+    const noBtn = document.getElementById('confirm-no-btn');
+    
+    // Clone node to clear listeners easily
+    const newYesBtn = yesBtn.cloneNode(true);
+    const newNoBtn = noBtn.cloneNode(true);
+    
+    yesBtn.parentNode.replaceChild(newYesBtn, yesBtn);
+    noBtn.parentNode.replaceChild(newNoBtn, noBtn);
+    
+    newYesBtn.addEventListener('click', () => {
+        // FIX: Simpan callback ke variabel lokal sebelum di-null-kan oleh closeCustomConfirm
+        const callbackToRun = confirmCallback; 
+        closeCustomConfirm();
+        if (callbackToRun) callbackToRun(true);
+    });
+    
+    newNoBtn.addEventListener('click', () => {
+        // FIX: Simpan callback ke variabel lokal
+        const callbackToRun = confirmCallback;
+        closeCustomConfirm();
+        if (callbackToRun) callbackToRun(false);
+    });
+
+    modal.classList.remove('hidden');
+}
+
+function closeCustomConfirm() {
+    document.getElementById('custom-confirm-modal').classList.add('hidden');
+    confirmCallback = null;
+}
+
 
 // --- HELPER: FORMAT RUPIAH ---
 const formatRupiah = (number) => {
@@ -376,6 +440,7 @@ function renderDashboard() {
     // 2. Logic Tombol Aksi (Khusus Admin vs User)
     const actionContainer = document.getElementById("dashboard-action-buttons");
     const adminManageSection = document.getElementById("admin-management-section");
+    const userVolunteerSection = document.getElementById("user-volunteer-history-section"); // SELECTOR BARU
 
     if (user.role === 'admin') {
         // ADMIN DASHBOARD
@@ -395,6 +460,7 @@ function renderDashboard() {
         
         // Tampilkan Tabel Manajemen Kampanye (Untuk Hapus)
         adminManageSection.classList.remove('hidden');
+        if(userVolunteerSection) userVolunteerSection.classList.add('hidden'); // Sembunyikan history relawan user
         renderAdminCampaignManagement();
 
         // ADMIN STATS (Global)
@@ -411,13 +477,19 @@ function renderDashboard() {
         // USER DASHBOARD
         adminManageSection.classList.add('hidden'); // Sembunyikan tabel admin
         
+        // TAMPILKAN TABEL HISTORY RELAWAN (USER)
+        if(userVolunteerSection) {
+            userVolunteerSection.classList.remove('hidden');
+            renderUserVolunteerHistory(user.id);
+        }
+        
         actionContainer.innerHTML = `
             <div class="flex gap-3">
                  <button onclick="window.location.href='#relawan'" class="bg-white border border-brand-200 text-brand-600 font-bold py-2.5 px-5 rounded-lg hover:bg-brand-50 transition shadow-sm flex items-center gap-2">
-                    <i class="fas fa-hands-helping"></i> Jadi Relawan
+                    Jadi Relawan
                 </button>
                 <button onclick="window.location.href='#create'" class="bg-brand-600 text-white font-bold py-2.5 px-5 rounded-lg hover:bg-brand-700 transition shadow-lg flex items-center gap-2">
-                    <i class="fas fa-heart"></i> Mulai Donasi
+                    Mulai Donasi
                 </button>
             </div>
         `;
@@ -477,7 +549,46 @@ function renderDashboard() {
     }
 }
 
-// --- [BARU] RENDER TABEL MANAGEMEN KAMPANYE (ADMIN HAPUS) ---
+// --- [BARU] RENDER HISTORY RELAWAN (USER SPECIFIC) ---
+function renderUserVolunteerHistory(userId) {
+    const tbody = document.getElementById("dashboard-volunteer-history-body");
+    if(!tbody) return;
+
+    // Filter pendaftaran milik user ini
+    const myApplications = volunteerApplicants.filter(app => app.userId === userId);
+    
+    if (myApplications.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-gray-400">Belum ada riwayat pendaftaran relawan.</td></tr>`;
+        return;
+    }
+
+    let html = "";
+    myApplications.forEach(app => {
+        const campaign = volunteerCampaigns.find(c => c.id === app.campaignId);
+        const title = campaign ? campaign.title : "Kegiatan Dihapus";
+        const location = campaign ? campaign.location : "-";
+        
+        let statusBadge = "";
+        if(app.status === 'Pending') statusBadge = `<span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-bold">Menunggu</span>`;
+        else if(app.status === 'Diterima') statusBadge = `<span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold">Diterima</span>`;
+        else statusBadge = `<span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-bold">Ditolak</span>`;
+
+        // Gunakan tanggal hari ini jika data lama tidak punya tanggal
+        const dateDisplay = app.appliedDate || "2023-10-01"; 
+
+        html += `
+            <tr class="hover:bg-blue-50 transition">
+                <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-sm">${dateDisplay}</td>
+                <td class="px-6 py-4 font-bold text-gray-800">${title}</td>
+                <td class="px-6 py-4 text-gray-600 text-sm"><i class="fas fa-map-marker-alt text-red-400 mr-1"></i>${location}</td>
+                <td class="px-6 py-4">${statusBadge}</td>
+            </tr>
+        `;
+    });
+    tbody.innerHTML = html;
+}
+
+// --- [BARU] RENDER TABEL MANAGEMEN KAMPANYE (ADMIN HAPUS & EDIT) ---
 function renderAdminCampaignManagement() {
     const tbody = document.getElementById("admin-campaign-list-body");
     if (!tbody) return;
@@ -492,9 +603,12 @@ function renderAdminCampaignManagement() {
                 <td class="px-6 py-3 font-semibold text-gray-800 line-clamp-1">${c.title}</td>
                 <td class="px-6 py-3 text-xs"><span class="bg-gray-100 text-gray-600 px-2 py-1 rounded">Donasi</span></td>
                 <td class="px-6 py-3 text-xs text-green-600 font-bold">Aktif</td>
-                <td class="px-6 py-3 text-center">
-                    <button onclick="handleDeleteCampaign(${c.id}, 'donation')" class="text-red-400 hover:text-red-600 transition">
-                        <i class="fas fa-trash"></i> Hapus
+                <td class="px-6 py-3 text-center whitespace-nowrap">
+                     <button onclick="openEditCampaignModal(${c.id}, 'donation')" class="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition duration-200 text-xs font-bold mr-2">
+                        <i class="fas fa-edit mr-1.5"></i> Edit
+                    </button>
+                    <button onclick="handleDeleteCampaign(${c.id}, 'donation')" class="inline-flex items-center px-3 py-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition duration-200 text-xs font-bold">
+                        <i class="fas fa-trash mr-1.5"></i> Hapus
                     </button>
                 </td>
             </tr>
@@ -509,9 +623,12 @@ function renderAdminCampaignManagement() {
                 <td class="px-6 py-3 font-semibold text-gray-800 line-clamp-1">${v.title}</td>
                 <td class="px-6 py-3 text-xs"><span class="bg-blue-100 text-blue-600 px-2 py-1 rounded">Relawan</span></td>
                 <td class="px-6 py-3 text-xs text-green-600 font-bold">Aktif</td>
-                <td class="px-6 py-3 text-center">
-                    <button onclick="handleDeleteCampaign(${v.id}, 'volunteer')" class="text-red-400 hover:text-red-600 transition">
-                        <i class="fas fa-trash"></i> Hapus
+                <td class="px-6 py-3 text-center whitespace-nowrap">
+                    <button onclick="openEditCampaignModal(${v.id}, 'volunteer')" class="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition duration-200 text-xs font-bold mr-2">
+                        <i class="fas fa-edit mr-1.5"></i> Edit
+                    </button>
+                    <button onclick="handleDeleteCampaign(${v.id}, 'volunteer')" class="inline-flex items-center px-3 py-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition duration-200 text-xs font-bold">
+                        <i class="fas fa-trash mr-1.5"></i> Hapus
                     </button>
                 </td>
             </tr>
@@ -525,22 +642,85 @@ function renderAdminCampaignManagement() {
     tbody.innerHTML = html;
 }
 
-// --- [BARU] FUNGSI HAPUS KAMPANYE ---
-function handleDeleteCampaign(id, type) {
-    if(!confirm("Apakah Anda yakin ingin menghapus kampanye ini? Data yang dihapus tidak bisa dikembalikan.")) return;
+// --- [BARU] LOGIKA EDIT KAMPANYE ---
+function openEditCampaignModal(id, type) {
+    let item;
+    const collectedInput = document.getElementById("edit-collected-container");
 
     if (type === 'donation') {
-        campaignsData = campaignsData.filter(c => c.id !== id);
+        item = campaignsData.find(c => c.id === id);
+        collectedInput.classList.remove('hidden'); // Tampilkan field donasi
+        document.getElementById("edit-collected").value = item.collected;
     } else {
-        volunteerCampaigns = volunteerCampaigns.filter(v => v.id !== id);
+        item = volunteerCampaigns.find(v => v.id === id);
+        collectedInput.classList.add('hidden'); // Sembunyikan field donasi untuk relawan
     }
 
-    // Re-render
+    if (!item) return;
+
+    document.getElementById("edit-campaign-id").value = id;
+    document.getElementById("edit-campaign-type").value = type;
+    document.getElementById("edit-title").value = item.title;
+    document.getElementById("edit-description").value = item.description;
+
+    document.getElementById("edit-campaign-modal").classList.remove('hidden');
+}
+
+function closeEditCampaignModal() {
+    document.getElementById("edit-campaign-modal").classList.add('hidden');
+}
+
+function handleUpdateCampaign(event) {
+    event.preventDefault();
+
+    const id = parseInt(document.getElementById("edit-campaign-id").value);
+    const type = document.getElementById("edit-campaign-type").value;
+    const newTitle = document.getElementById("edit-title").value;
+    const newDesc = document.getElementById("edit-description").value;
+
+    if (type === 'donation') {
+        const item = campaignsData.find(c => c.id === id);
+        if (item) {
+            item.title = newTitle;
+            item.description = newDesc;
+            item.collected = parseInt(document.getElementById("edit-collected").value);
+        }
+    } else {
+        const item = volunteerCampaigns.find(v => v.id === id);
+        if (item) {
+            item.title = newTitle;
+            item.description = newDesc;
+        }
+    }
+
+    showCustomAlert("Perubahan berhasil disimpan!");
+    closeEditCampaignModal();
+    
+    // Refresh Tampilan
     renderDashboard();
     renderHomeCampaigns();
     renderExploreCampaigns();
-    renderVolunteerPage(); // Kalau ada yg dihapus
-    alert("Kampanye berhasil dihapus!");
+    renderVolunteerPage();
+}
+
+// --- [BARU] FUNGSI HAPUS KAMPANYE ---
+function handleDeleteCampaign(id, type) {
+    showCustomConfirm("Apakah Anda yakin ingin menghapus kampanye ini? Data yang dihapus tidak bisa dikembalikan.", (confirmed) => {
+        if (confirmed) {
+            if (type === 'donation') {
+                campaignsData = campaignsData.filter(c => c.id !== id);
+            } else {
+                volunteerCampaigns = volunteerCampaigns.filter(v => v.id !== id);
+            }
+
+            // Re-render
+            renderDashboard();
+            renderHomeCampaigns();
+            renderExploreCampaigns();
+            renderVolunteerPage();
+            showCustomAlert("Kampanye berhasil dihapus!");
+        }
+    });
 }
 
 
@@ -717,18 +897,19 @@ function handleDonationPayment(event) {
 
     // 3. Close & Refresh
     closeDonationModal();
-    alert(`Terima kasih, ${donorName}! Donasi sebesar ${formatRupiah(amount)} berhasil diterima via ${method}.`);
-
-    // Re-render UI (Crucial Fix: Update all views)
-    renderDetailPage(currentDonationCampaignId); // Update detail view immediately
-    renderHomeCampaigns(); // Update home view
-    renderExploreCampaigns(); // Update explore view
+    renderDetailPage(currentDonationCampaignId); 
+    renderHomeCampaigns(); 
+    renderExploreCampaigns(); 
     renderDashboard(); 
-    
-    // Optional: Redirect to dashboard to see history
-    if(user && confirm("Lihat riwayat donasi di dashboard?")) {
-        window.location.hash = "#dashboard";
-    }
+
+    // Tampilkan notifikasi dan arahkan ke halaman donasi (#create) setelah OK diklik
+    showCustomAlert(
+        `Terima kasih, ${donorName}! Donasi sebesar ${formatRupiah(amount)} berhasil diterima via ${method}.`,
+        "Berhasil", 
+        () => {
+            window.location.hash = "#create";
+        }
+    );
 }
 
 // --- HANDLE FILTER & BUTTONS ---
@@ -803,7 +984,7 @@ function handleCreateCampaign(event) {
   window.location.hash = "#dashboard";
   renderExploreCampaigns();
   renderHomeCampaigns();
-  alert("Kampanye Donasi berhasil dibuat!");
+  showCustomAlert("Kampanye Donasi berhasil dibuat!");
 }
 
 // --- LOGIKA FORM RELAWAN (ADMIN CREATE) ---
@@ -813,6 +994,7 @@ function handleCreateVolunteerCampaign(event) {
     const title = document.getElementById("vol-title").value.trim();
     const location = document.getElementById("vol-location").value.trim();
     const date = document.getElementById("vol-date").value;
+    const targetPeople = parseInt(document.getElementById("vol-target-people").value); // Ambil jumlah orang
     const imageInput = document.getElementById("vol-image").value.trim();
     const description = document.getElementById("vol-description").value.trim();
 
@@ -827,6 +1009,7 @@ function handleCreateVolunteerCampaign(event) {
         title: title,
         location: location,
         date: date,
+        targetPeople: targetPeople, // Simpan jumlah orang
         image: image,
         description: description,
         isActive: true
@@ -837,7 +1020,7 @@ function handleCreateVolunteerCampaign(event) {
 
     window.location.hash = "#dashboard";
     renderVolunteerPage();
-    alert("Kegiatan Relawan berhasil dibuat!");
+    showCustomAlert("Kegiatan Relawan berhasil dibuat!");
 }
 
 // --- [UPDATE] LOGIKA DAFTAR RELAWAN (MODAL GUEST) ---
@@ -886,7 +1069,7 @@ function handleVolunteerSubmit(event) {
     // Cek duplikasi (berdasarkan email & campaign ID untuk guest)
     const existing = volunteerApplicants.find(a => a.campaignId === currentVolCampaignId && a.email === email);
     if(existing) {
-        alert("Email ini sudah terdaftar untuk kegiatan ini.");
+        showCustomAlert("Email ini sudah terdaftar untuk kegiatan ini.", "Peringatan");
         return;
     }
 
@@ -901,14 +1084,17 @@ function handleVolunteerSubmit(event) {
         email: email,
         contact: phone, // Mapping phone ke contact
         address: address,
-        status: "Pending"
+        status: "Pending",
+        appliedDate: new Date().toISOString().split('T')[0] // MENYIMPAN TANGGAL PENDAFTARAN
     };
 
     volunteerApplicants.push(newApplicant);
     
     closeVolunteerModal();
-    alert(`Terima kasih, ${name}! Pendaftaran Anda telah diterima dan menunggu konfirmasi admin.`);
+    showCustomAlert(`Terima kasih, ${name}! Pendaftaran Anda telah diterima dan menunggu konfirmasi admin.`);
     
+    // Refresh dashboard jika di halaman dashboard
+    renderDashboard();
     // Refresh admin table jika sedang dibuka di tab lain/admin
     renderAdminRelawan();
 }
@@ -919,7 +1105,7 @@ function updateVolunteerStatus(appId, newStatus) {
     if(appIndex !== -1) {
         volunteerApplicants[appIndex].status = newStatus;
         renderAdminRelawan(); // Re-render table
-        alert(`Status relawan berhasil diubah menjadi: ${newStatus}`);
+        showCustomAlert(`Status relawan berhasil diubah menjadi: ${newStatus}`);
     }
 }
 
@@ -951,7 +1137,7 @@ function handleRouting() {
       // 1. HALAMAN YANG BUTUH LOGIN
       const protectedRoutes = ["dashboard", "create-form", "buat-relawan", "admin-relawan"];
       if (protectedRoutes.includes(targetSectionId) && !user) {
-           alert("Silakan masuk terlebih dahulu.");
+           showCustomAlert("Silakan masuk terlebih dahulu.", "Akses Dibatasi");
            window.location.hash = "#login";
            return;
       }
@@ -959,7 +1145,7 @@ function handleRouting() {
       // 2. HALAMAN KHUSUS ADMIN
       const adminRoutes = ["create-form", "buat-relawan", "admin-relawan"];
       if (adminRoutes.includes(targetSectionId) && user.role !== "admin") {
-          alert("Akses Ditolak! Halaman ini khusus Administrator.");
+          showCustomAlert("Akses Ditolak! Halaman ini khusus Administrator.", "Akses Ditolak");
           window.location.hash = "#dashboard";
           return;
       }
@@ -1022,11 +1208,13 @@ function handleLogin(event) {
 }
 
 function handleLogout() {
-  if (confirm("Yakin ingin keluar?")) {
-    localStorage.removeItem("currentUser");
-    window.location.hash = "#home";
-    checkLoginStatus();
-  }
+  showCustomConfirm("Yakin ingin keluar?", (confirmed) => {
+      if(confirmed) {
+        localStorage.removeItem("currentUser");
+        window.location.hash = "#home";
+        checkLoginStatus();
+      }
+  });
 }
 
 function checkLoginStatus() {
