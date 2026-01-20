@@ -82,7 +82,7 @@ let volunteerCampaigns = [
         title: "Relawan Mengajar di Sumba",
         location: "Sumba, NTT",
         date: "2023-12-10",
-        image: "https://placehold.co/400x250?text=Mengajar+Sumba",
+        image: "assets/relawan/Relawan_Sumba.jpg",
         description: "Mari berbagi ilmu dengan anak-anak di pedalaman Sumba. Dibutuhkan 5 orang relawan pengajar Matematika dasar dan Bahasa Inggris.",
         isActive: true
     },
@@ -91,7 +91,7 @@ let volunteerCampaigns = [
         title: "Bersih Pantai Kuta Bali",
         location: "Kuta, Bali",
         date: "2023-11-20",
-        image: "https://placehold.co/400x250?text=Bersih+Pantai",
+        image: "assets/relawan/Cleaning_Kuta.jpg",
         description: "Aksi nyata membersihkan sampah plastik di sepanjang pantai Kuta. Free snack dan sertifikat.",
         isActive: true
     }
