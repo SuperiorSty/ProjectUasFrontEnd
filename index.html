@@ -76,7 +76,7 @@
           >
             <a href="#home" class="hover:text-brand-600 transition">Beranda</a>
             <a href="#create" class="hover:text-brand-600 transition">Donasi</a>
-            <!-- NEW MENU RELAWAN -->
+            <!-- MENU RELAWAN -->
             <a href="#relawan" class="hover:text-brand-600 transition">Relawan</a>
             <a href="#about" class="hover:text-brand-600 transition">Tentang</a>
           </div>
@@ -150,6 +150,7 @@
           <div class="absolute inset-0 z-0">
             <img
               src="assets/BerandaPict.png"
+              onerror="this.src='https://placehold.co/1200x500?text=Ruang+Peduli'"
               alt=""
               class="w-full h-full object-cover blur-xl scale-110 opacity-70"
             />
@@ -160,6 +161,7 @@
           >
             <img
               src="assets/BerandaPict.png"
+              onerror="this.src='https://placehold.co/800x400?text=Hero+Image'"
               alt="Hero Illustration"
               class="h-full w-auto object-contain rounded-lg shadow-lg hover:scale-[1.02] transition duration-500"
             />
@@ -278,7 +280,7 @@
         </div>
       </section>
 
-      <!-- [BARU] SECTION RELAWAN (PUBLIC LIST) -->
+      <!-- SECTION RELAWAN (PUBLIC LIST) -->
       <section id="relawan" class="hidden-section pt-4 pb-16">
         <div class="max-w-7xl mx-auto">
              <div class="text-center mb-10 py-8 bg-blue-50 rounded-2xl border border-blue-100">
@@ -297,7 +299,7 @@
         </div>
       </section>
 
-      <!-- [BARU] SECTION ADMIN RELAWAN (MANAGE APPLICANTS) -->
+      <!-- SECTION ADMIN RELAWAN (MANAGE APPLICANTS) -->
       <section id="admin-relawan" class="hidden-section pt-4 pb-16">
           <div class="max-w-6xl mx-auto">
                <div class="flex items-center mb-6">
@@ -333,7 +335,7 @@
           </div>
       </section>
 
-      <!-- [BARU] SECTION BUAT RELAWAN (ADMIN ONLY FORM) -->
+      <!-- SECTION BUAT RELAWAN (ADMIN ONLY FORM) -->
       <section id="buat-relawan" class="hidden-section pb-16">
         <div class="max-w-3xl mx-auto">
           <!-- Header -->
@@ -429,7 +431,7 @@
         </div>
       </section>
 
-      <!-- [BARU] SECTION DASHBOARD (User & Admin) -->
+      <!-- SECTION DASHBOARD (User & Admin) -->
       <section id="dashboard" class="hidden-section pt-4 pb-16">
         <div class="max-w-7xl mx-auto">
           <!-- Welcome Banner -->
@@ -445,7 +447,7 @@
               </p>
             </div>
             <div class="mt-4 md:mt-0" id="dashboard-action-buttons">
-                <!-- Tombol aksi akan muncul via JS (Create Campaign utk Admin, dsb) -->
+                <!-- Tombol aksi akan muncul via JS -->
             </div>
           </div>
 
@@ -758,7 +760,7 @@
         <!-- Kotak Hijau sekarang memiliki rounded-[40px] -->
         <div class="relative bg-brand-700 py-20 md:py-32 overflow-hidden rounded-[40px] shadow-lg">
             <div class="absolute inset-0 opacity-20">
-                <img src="assets/bantuan_korban.jpeg" class="w-full h-full object-cover" alt="Background">
+                <img src="assets/bantuan_korban.jpeg" class="w-full h-full object-cover" alt="Background" onerror="this.style.display='none'">
             </div>
             <div class="container mx-auto px-4 relative z-10 text-center text-white">
                 <h1 class="text-4xl md:text-5xl font-bold mb-4">Tentang Ruang Peduli</h1>
@@ -775,6 +777,7 @@
               <div class="rounded-3xl overflow-hidden shadow-2xl">
                 <img
                   src="assets/bantuan_bencana.png"
+                  onerror="this.src='https://placehold.co/600x400?text=Tentang+Kami'"
                   alt="Aktivitas Sosial"
                   class="w-full h-64 md:h-[400px] object-cover"
                 />
@@ -944,6 +947,93 @@
         </div>
       </div>
     </footer>
+
+    <!-- NEW DONATION MODAL -->
+    <div id="donation-modal" class="fixed inset-0 z-[60] hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Background Overlay -->
+            <div class="fixed inset-0 transition-opacity bg-gray-900 bg-opacity-75" aria-hidden="true" onclick="closeDonationModal()"></div>
+            
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            
+            <!-- Modal Panel -->
+            <div class="inline-block w-full max-w-lg overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl sm:my-8">
+                <div class="bg-white p-6">
+                    <div class="w-full text-center"> <!-- Centered Container -->
+                        <!-- Removed Icon Div -->
+                        
+                        <h3 class="text-xl font-bold leading-6 text-gray-900" id="modal-title">
+                            Donasi Sekarang
+                        </h3>
+                        <div class="mt-2">
+                            <p class="mb-4 text-sm font-medium text-gray-500" id="modal-campaign-title">
+                                Campaign Title Here
+                            </p>
+                            <form id="donation-form" onsubmit="handleDonationPayment(event)">
+                                <!-- Nominal -->
+                                <div class="mb-4 text-left"> <!-- Form input tetap left aligned agar rapi -->
+                                    <label class="block mb-2 text-sm font-bold text-gray-700" for="donation-amount">
+                                        Nominal Donasi (Rp)
+                                    </label>
+                                    <div class="relative">
+                                        <span class="absolute text-gray-500 left-3 top-2.5">Rp</span>
+                                        <input class="w-full py-2.5 pl-10 pr-3 leading-tight text-gray-700 border rounded-lg appearance-none shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500" id="donation-amount" type="number" min="10000" placeholder="Minimal 10.000" required>
+                                    </div>
+                                    <div class="flex flex-wrap gap-2 mt-2 justify-center"> <!-- Button options centered -->
+                                        <button type="button" onclick="setAmount(50000)" class="px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-full hover:bg-brand-100 hover:text-brand-600">50rb</button>
+                                        <button type="button" onclick="setAmount(100000)" class="px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-full hover:bg-brand-100 hover:text-brand-600">100rb</button>
+                                        <button type="button" onclick="setAmount(200000)" class="px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-full hover:bg-brand-100 hover:text-brand-600">200rb</button>
+                                        <button type="button" onclick="setAmount(500000)" class="px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-full hover:bg-brand-100 hover:text-brand-600">500rb</button>
+                                    </div>
+                                </div>
+
+                                <!-- Payment Method -->
+                                <div class="mb-4 text-left">
+                                    <label class="block mb-2 text-sm font-bold text-gray-700" for="payment-method">
+                                        Metode Pembayaran
+                                    </label>
+                                    <select class="w-full py-2.5 px-3 leading-tight text-gray-700 bg-white border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500" id="payment-method" required>
+                                        <option value="">Pilih Metode</option>
+                                        <option value="Transfer Bank (BCA)">Transfer Bank (BCA)</option>
+                                        <option value="Transfer Bank (Mandiri)">Transfer Bank (Mandiri)</option>
+                                        <option value="GoPay">GoPay</option>
+                                        <option value="OVO">OVO</option>
+                                        <option value="Dana">Dana</option>
+                                    </select>
+                                </div>
+
+                                <!-- Name -->
+                                <div class="mb-4 text-left">
+                                    <label class="block mb-2 text-sm font-bold text-gray-700" for="donor-name">
+                                        Nama (Opsional)
+                                    </label>
+                                    <input class="w-full py-2.5 px-3 leading-tight text-gray-700 border rounded-lg appearance-none shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500" id="donor-name" type="text" placeholder="Nama Anda (atau biarkan kosong)">
+                                    <p class="mt-1 text-xs text-gray-400">Biarkan kosong jika ingin berdonasi sebagai Hamba Allah.</p>
+                                </div>
+                                
+                                <!-- Message -->
+                                <div class="mb-4 text-left">
+                                    <label class="block mb-2 text-sm font-bold text-gray-700" for="donor-message">
+                                        Doa / Pesan (Opsional)
+                                    </label>
+                                    <textarea class="w-full py-2.5 px-3 leading-tight text-gray-700 border rounded-lg appearance-none shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500" id="donor-message" rows="2" placeholder="Tulis doa terbaikmu..."></textarea>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal Footer -->
+                <div class="px-4 py-3 bg-gray-50 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="submit" form="donation-form" class="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white border border-transparent rounded-lg shadow-sm bg-brand-600 hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        Bayar Sekarang
+                    </button>
+                    <button type="button" onclick="closeDonationModal()" class="inline-flex justify-center w-full px-4 py-2 mt-3 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        Batal
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Link ke Script JS -->
     <script src="script.js"></script>

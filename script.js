@@ -572,6 +572,24 @@ function renderDetailPage(id) {
       badgeClass = "bg-red-600";
   }
 
+  // LOGIC TOMBOL DONASI
+  const isFinished = !item.isActive || percentage >= 100;
+  let actionButtonHtml = "";
+
+  if (isFinished) {
+       actionButtonHtml = `
+        <button disabled class="w-full bg-gray-300 text-gray-500 font-bold py-4 rounded-xl cursor-not-allowed shadow-none">
+            Donasi Ditutup / Tercapai
+        </button>
+       `;
+  } else {
+      actionButtonHtml = `
+        <button onclick="openDonationModal(${item.id})" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-brand-200 transition transform hover:-translate-y-1">
+            Donasi Sekarang
+        </button>
+      `;
+  }
+
   container.innerHTML = `
         <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
             <div class="md:flex">
@@ -619,14 +637,91 @@ function renderDetailPage(id) {
                         </div>
                         <p class="text-right text-xs text-gray-500 mb-6">${Math.round(percentage)}% tercapai</p>
 
-                        <button onclick="alert('Lanjut ke Payment Gateway...')" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-brand-200 transition transform hover:-translate-y-1">
-                            Donasi Sekarang
-                        </button>
+                        ${actionButtonHtml}
                     </div>
                 </div>
             </div>
         </div>
     `;
+}
+
+// --- [BARU] LOGIKA POPUP DONASI ---
+let currentDonationCampaignId = null;
+
+function openDonationModal(campaignId) {
+    const campaign = campaignsData.find(c => c.id === campaignId);
+    if(!campaign) return;
+
+    currentDonationCampaignId = campaignId;
+    document.getElementById('modal-campaign-title').innerText = campaign.title;
+    document.getElementById('donation-amount').value = '';
+    document.getElementById('donor-name').value = '';
+    document.getElementById('donor-message').value = '';
+    
+    // Pre-fill name if logged in
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    if(user) {
+        document.getElementById('donor-name').value = user.name;
+    }
+
+    document.getElementById('donation-modal').classList.remove('hidden');
+}
+
+function closeDonationModal() {
+    document.getElementById('donation-modal').classList.add('hidden');
+    currentDonationCampaignId = null;
+}
+
+function setAmount(amount) {
+    document.getElementById('donation-amount').value = amount;
+}
+
+function handleDonationPayment(event) {
+    event.preventDefault();
+    
+    const amount = parseInt(document.getElementById('donation-amount').value);
+    const method = document.getElementById('payment-method').value;
+    const nameInput = document.getElementById('donor-name').value.trim();
+    const message = document.getElementById('donor-message').value.trim();
+    
+    // Get User (Optional, can be anonymous)
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    const userId = user ? user.id : null; // If null, it's guest
+    const donorName = nameInput || "Hamba Allah";
+
+    // 1. Add to Transaction History
+    const newTransaction = {
+        id: Date.now(), // Generate ID
+        userId: userId || 9999, // 9999 for Guest
+        campaignId: currentDonationCampaignId,
+        amount: amount,
+        date: new Date().toISOString().split('T')[0],
+        status: 'Berhasil',
+        name: donorName,
+        method: method
+    };
+    donationsHistory.push(newTransaction);
+
+    // 2. Update Campaign Collected Amount
+    const campaignIndex = campaignsData.findIndex(c => c.id === currentDonationCampaignId);
+    if(campaignIndex !== -1) {
+        campaignsData[campaignIndex].collected += amount;
+    }
+
+    // 3. Close & Refresh
+    closeDonationModal();
+    alert(`Terima kasih, ${donorName}! Donasi sebesar ${formatRupiah(amount)} berhasil diterima via ${method}.`);
+
+    // Re-render UI (Crucial Fix: Update all views)
+    renderDetailPage(currentDonationCampaignId); // Update detail view immediately
+    renderHomeCampaigns(); // Update home view
+    renderExploreCampaigns(); // Update explore view
+    renderDashboard(); 
+    
+    // Optional: Redirect to dashboard to see history
+    if(user && confirm("Lihat riwayat donasi di dashboard?")) {
+        window.location.hash = "#dashboard";
+    }
 }
 
 // --- HANDLE FILTER & BUTTONS ---
@@ -661,7 +756,7 @@ if (exploreSearchInput) {
   });
 }
 
-// --- LOGIKA FORM DONASI ---
+// --- LOGIKA FORM DONASI (CREATE CAMPAIGN) ---
 function handleCreateCampaign(event) {
   event.preventDefault();
 
@@ -704,7 +799,7 @@ function handleCreateCampaign(event) {
   alert("Kampanye Donasi berhasil dibuat!");
 }
 
-// --- [BARU] LOGIKA FORM RELAWAN ---
+// --- LOGIKA FORM RELAWAN ---
 function handleCreateVolunteerCampaign(event) {
     event.preventDefault();
 
@@ -738,7 +833,7 @@ function handleCreateVolunteerCampaign(event) {
     alert("Kegiatan Relawan berhasil dibuat!");
 }
 
-// --- [BARU] LOGIKA DAFTAR RELAWAN (USER) ---
+// --- LOGIKA DAFTAR RELAWAN (USER) ---
 function registerVolunteer(campaignId) {
     const user = JSON.parse(localStorage.getItem("currentUser"));
     if (!user) {
@@ -767,7 +862,7 @@ function registerVolunteer(campaignId) {
     alert("Berhasil mendaftar! Admin akan meninjau pendaftaran Anda.");
 }
 
-// --- [BARU] LOGIKA TERIMA/TOLAK RELAWAN (ADMIN) ---
+// --- LOGIKA TERIMA/TOLAK RELAWAN (ADMIN) ---
 function updateVolunteerStatus(appId, newStatus) {
     const appIndex = volunteerApplicants.findIndex(a => a.id === appId);
     if(appIndex !== -1) {
