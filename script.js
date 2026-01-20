@@ -22,7 +22,7 @@ let campaignsData = [
     target: 500000000,
     organizer: "Peduli Sesama",
     verified: true,
-    isActive: false,
+    isActive: false, // Sudah ditutup
     description: "Musim dingin tiba, saudara kita di Palestina membutuhkan selimut, makanan, dan obat-obatan.",
   },
   {
@@ -51,7 +51,7 @@ let campaignsData = [
   },
   {
     id: 5,
-    title: "Sedekah Air Bersih untuk Warga Aceh Kekeringan",
+    title: "Sedekah Air Bersih untuk Warga Aceh Terdampak Banjir",
     image: "assets/CardPict/Air Bersih Untuk Warga Aceh.png",
     category: "Sosial",
     collected: 12500000,
@@ -82,6 +82,7 @@ let volunteerCampaigns = [
         title: "Relawan Mengajar di Sumba",
         location: "Sumba, NTT",
         date: "2023-12-10",
+        targetPeople: 10, // Target relawan
         image: "assets/relawan/Relawan_Sumba.jpg",
         description: "Mari berbagi ilmu dengan anak-anak di pedalaman Sumba. Dibutuhkan 5 orang relawan pengajar Matematika dasar dan Bahasa Inggris.",
         isActive: true
@@ -91,6 +92,7 @@ let volunteerCampaigns = [
         title: "Bersih Pantai Kuta Bali",
         location: "Kuta, Bali",
         date: "2023-11-20",
+        targetPeople: 50, // Target relawan
         image: "assets/relawan/Cleaning_Kuta.jpg",
         description: "Aksi nyata membersihkan sampah plastik di sepanjang pantai Kuta. Free snack dan sertifikat.",
         isActive: true
@@ -100,8 +102,8 @@ let volunteerCampaigns = [
 // Data Pendaftar Relawan (Applicants)
 // Structure Updated: Added email, address
 let volunteerApplicants = [
-    { id: 1, campaignId: 201, userId: 2, name: "Budi Santoso", email: "user@gmail.com", contact: "08123456789", address: "Jl. Merdeka No 1", appliedDate: "2023-11-01", status: "Pending" },
-    { id: 2, campaignId: 202, userId: 2, name: "Budi Santoso", email: "user@gmail.com", contact: "08123456789", address: "Jl. Merdeka No 1", appliedDate: "2023-10-28", status: "Diterima" }
+    { id: 1, campaignId: 201, userId: 2, name: "Bayu kurniawan", email: "bayukur@gmail.com", contact: "085933671760", address: "Jl. Raya Ubud", appliedDate: "2023-11-01", status: "Pending" },
+    { id: 2, campaignId: 202, userId: 2, name: "Budi santoso", email: "budisantoso@gmail.com", contact: "08457765443", address: "Jl. Merdeka No 1", appliedDate: "2023-10-28", status: "Diterima" }
 ];
 
 
@@ -138,6 +140,7 @@ let alertCallback = null;
 
 function showCustomAlert(message, title = "Info", callback = null) {
     const modal = document.getElementById('custom-alert-modal');
+    if(!modal) { alert(message); return; } // Fallback
     document.getElementById('alert-title').innerText = title;
     document.getElementById('alert-message').innerText = message;
     alertCallback = callback; // Simpan callback untuk dijalankan saat tutup
@@ -157,6 +160,13 @@ let confirmCallback = null;
 
 function showCustomConfirm(message, onConfirm, title = "Konfirmasi") {
     const modal = document.getElementById('custom-confirm-modal');
+    if(!modal) { 
+        // Fallback standard confirm
+        const result = confirm(message);
+        onConfirm(result);
+        return;
+    }
+
     document.getElementById('confirm-title').innerText = title;
     document.getElementById('confirm-message').innerText = message;
     
@@ -175,14 +185,12 @@ function showCustomConfirm(message, onConfirm, title = "Konfirmasi") {
     noBtn.parentNode.replaceChild(newNoBtn, noBtn);
     
     newYesBtn.addEventListener('click', () => {
-        // FIX: Simpan callback ke variabel lokal sebelum di-null-kan oleh closeCustomConfirm
         const callbackToRun = confirmCallback; 
         closeCustomConfirm();
         if (callbackToRun) callbackToRun(true);
     });
     
     newNoBtn.addEventListener('click', () => {
-        // FIX: Simpan callback ke variabel lokal
         const callbackToRun = confirmCallback;
         closeCustomConfirm();
         if (callbackToRun) callbackToRun(false);
@@ -213,6 +221,7 @@ function createCardHTML(item) {
   let percentage = (item.collected / item.target) * 100;
   if (percentage > 100) percentage = 100;
 
+  // Logic Warna Bar
   let barColorClass = "bg-brand-500"; 
   if (item.hasOwnProperty('isActive') && !item.isActive) {
       barColorClass = "bg-gray-500";
@@ -220,6 +229,7 @@ function createCardHTML(item) {
       barColorClass = "bg-red-500";
   }
 
+  // Logic Badge Status
   let badgeText = "Dibuka";
   let badgeClass = "bg-brand-600"; 
 
@@ -231,13 +241,29 @@ function createCardHTML(item) {
       badgeClass = "bg-red-600"; 
   }
 
+  // Logic Button
+  let buttonHtml = "";
+  if (!item.isActive || percentage >= 100) {
+      buttonHtml = `
+        <button disabled class="w-full bg-gray-300 text-gray-500 font-bold py-2.5 rounded-lg cursor-not-allowed shadow-none">
+            ${!item.isActive ? 'Donasi Ditutup' : 'Target Tercapai'}
+        </button>
+      `;
+  } else {
+      buttonHtml = `
+        <button onclick="window.location.href='#detail/${item.id}'; event.stopPropagation();" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 rounded-lg transition duration-200 shadow-sm shadow-brand-200">
+            Donasi Sekarang
+        </button>
+      `;
+  }
+
   const imgSrc = item.image;
 
   return `
         <div onclick="window.location.href='#detail/${item.id}'" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col h-full group cursor-pointer transform hover:-translate-y-1">
             
             <div class="relative h-48 w-full overflow-hidden bg-gray-200">
-                <img src="${imgSrc}" alt="${item.title}" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src='https://placehold.co/400x200?text=Gagal+Memuat+Gambar'" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500">
+                <img src="${imgSrc}" alt="${item.title}" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src='https://placehold.co/400x200?text=Gagal+Memuat+Gambar'" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500 ${!item.isActive ? 'grayscale' : ''}">
                 
                 <div class="absolute top-3 left-3 ${badgeClass} text-white px-2 py-1 rounded text-xs font-bold shadow-md z-10 border border-white/20">
                     ${badgeText}
@@ -280,34 +306,69 @@ function createCardHTML(item) {
             </div>
 
             <div class="p-4 pt-0">
-                <button onclick="window.location.href='#detail/${item.id}'; event.stopPropagation();" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 rounded-lg transition duration-200 shadow-sm shadow-brand-200">
-                    Donasi Sekarang
-                </button>
+                ${buttonHtml}
             </div>
         </div>
     `;
 }
 
-// --- [BARU] FUNGSI RENDER VOLUNTEER CARD (PUBLIC) ---
+// --- [UPDATE] FUNGSI RENDER VOLUNTEER CARD (DENGAN PROGRES BAR) ---
 function createVolunteerCardHTML(item) {
+    // Hitung relawan yang diterima
+    const acceptedCount = volunteerApplicants.filter(a => a.campaignId === item.id && a.status === 'Diterima').length;
+    const targetCount = item.targetPeople || 10; // Default fallback
+    let percent = (acceptedCount / targetCount) * 100;
+    if (percent > 100) percent = 100;
+
+    // Logic Button & Status
+    let buttonHtml = "";
+    let badgeHtml = '<div class="absolute top-3 left-3 bg-blue-600 text-white px-2 py-1 rounded text-xs font-bold shadow-md">Relawan</div>';
+    let imageClass = "";
+
+    if (!item.isActive) {
+        // Jika Ditutup
+        buttonHtml = `
+            <button disabled class="w-full bg-gray-300 text-gray-500 font-bold py-2.5 rounded-lg cursor-not-allowed">
+                Pendaftaran Ditutup
+            </button>
+        `;
+        badgeHtml = '<div class="absolute top-3 left-3 bg-gray-600 text-white px-2 py-1 rounded text-xs font-bold shadow-md">Ditutup</div>';
+        imageClass = "grayscale";
+    } else {
+        // Jika Buka
+        buttonHtml = `
+            <button onclick="registerVolunteer(${item.id})" class="w-full bg-white border border-blue-600 text-blue-600 hover:bg-blue-50 font-bold py-2.5 rounded-lg transition">
+                Daftar Jadi Relawan
+            </button>
+        `;
+    }
+
     return `
         <div class="bg-white rounded-xl shadow-sm border border-blue-100 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col h-full transform hover:-translate-y-1">
             <div class="relative h-48 w-full overflow-hidden bg-gray-200">
-                <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover">
-                <div class="absolute top-3 left-3 bg-blue-600 text-white px-2 py-1 rounded text-xs font-bold shadow-md">
-                    Relawan
-                </div>
+                <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover ${imageClass}">
+                ${badgeHtml}
             </div>
             <div class="p-5 flex flex-col flex-grow">
                  <h3 class="font-bold text-lg text-gray-900 leading-snug mb-2 line-clamp-2">${item.title}</h3>
                  <p class="text-sm text-gray-500 mb-3"><i class="fas fa-map-marker-alt text-red-400 mr-2"></i>${item.location}</p>
                  <p class="text-sm text-gray-500 mb-4"><i class="far fa-calendar-alt text-blue-400 mr-2"></i>${item.date}</p>
-                 <p class="text-gray-600 text-sm line-clamp-3 mb-4">${item.description}</p>
+                 
+                 <!-- PROGRESS BAR RELAWAN -->
+                 <div class="mb-4">
+                    <div class="flex justify-between text-xs mb-1">
+                        <span class="text-gray-600 font-semibold">${acceptedCount} / ${targetCount} Relawan</span>
+                        <span class="text-blue-600 font-bold">${Math.round(percent)}%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-blue-500 h-2 rounded-full transition-all duration-500" style="width: ${percent}%"></div>
+                    </div>
+                 </div>
+
+                 <p class="text-gray-600 text-sm line-clamp-2 mb-4">${item.description}</p>
                  
                  <div class="mt-auto">
-                    <button onclick="registerVolunteer(${item.id})" class="w-full bg-white border border-blue-600 text-blue-600 hover:bg-blue-50 font-bold py-2.5 rounded-lg transition">
-                        Daftar Jadi Relawan
-                    </button>
+                    ${buttonHtml}
                  </div>
             </div>
         </div>
@@ -365,7 +426,7 @@ function renderExploreCampaigns() {
   container.innerHTML = html;
 }
 
-// --- [BARU] RENDER HALAMAN RELAWAN (PUBLIC) ---
+// --- RENDER HALAMAN RELAWAN (PUBLIC) ---
 function renderVolunteerPage() {
     const container = document.getElementById("volunteer-campaign-list");
     if (!container) return;
@@ -382,7 +443,7 @@ function renderVolunteerPage() {
     container.innerHTML = html;
 }
 
-// --- [BARU] RENDER HALAMAN ADMIN RELAWAN (MANAGE APPLICANTS) ---
+// --- RENDER HALAMAN ADMIN RELAWAN (MANAGE APPLICANTS) ---
 function renderAdminRelawan() {
     const tbody = document.getElementById("admin-volunteer-tbody");
     if(!tbody) return;
@@ -428,7 +489,7 @@ function renderAdminRelawan() {
 }
 
 
-// --- [BARU] RENDER DASHBOARD (LOGIC UTAMA) ---
+// --- RENDER DASHBOARD (LOGIC UTAMA) ---
 function renderDashboard() {
     const user = JSON.parse(localStorage.getItem("currentUser"));
     if (!user) return;
@@ -440,7 +501,7 @@ function renderDashboard() {
     // 2. Logic Tombol Aksi (Khusus Admin vs User)
     const actionContainer = document.getElementById("dashboard-action-buttons");
     const adminManageSection = document.getElementById("admin-management-section");
-    const userVolunteerSection = document.getElementById("user-volunteer-history-section"); // SELECTOR BARU
+    const userVolunteerSection = document.getElementById("user-volunteer-history-section");
 
     if (user.role === 'admin') {
         // ADMIN DASHBOARD
@@ -549,7 +610,7 @@ function renderDashboard() {
     }
 }
 
-// --- [BARU] RENDER HISTORY RELAWAN (USER SPECIFIC) ---
+// --- RENDER HISTORY RELAWAN (USER SPECIFIC) ---
 function renderUserVolunteerHistory(userId) {
     const tbody = document.getElementById("dashboard-volunteer-history-body");
     if(!tbody) return;
@@ -573,7 +634,6 @@ function renderUserVolunteerHistory(userId) {
         else if(app.status === 'Diterima') statusBadge = `<span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold">Diterima</span>`;
         else statusBadge = `<span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-bold">Ditolak</span>`;
 
-        // Gunakan tanggal hari ini jika data lama tidak punya tanggal
         const dateDisplay = app.appliedDate || "2023-10-01"; 
 
         html += `
@@ -588,7 +648,7 @@ function renderUserVolunteerHistory(userId) {
     tbody.innerHTML = html;
 }
 
-// --- [BARU] RENDER TABEL MANAGEMEN KAMPANYE (ADMIN HAPUS & EDIT) ---
+// --- [UPDATE] RENDER TABEL MANAGEMEN KAMPANYE (ADMIN) ---
 function renderAdminCampaignManagement() {
     const tbody = document.getElementById("admin-campaign-list-body");
     if (!tbody) return;
@@ -597,13 +657,22 @@ function renderAdminCampaignManagement() {
 
     // 1. List Donasi
     campaignsData.forEach(c => {
+        const statusLabel = c.isActive ? 'Aktif' : 'Tutup';
+        const statusClass = c.isActive ? 'text-green-600' : 'text-gray-500';
+        const statusBtnClass = c.isActive ? 'bg-orange-50 text-orange-600 hover:bg-orange-100' : 'bg-green-50 text-green-600 hover:bg-green-100';
+        const statusIcon = c.isActive ? 'fa-ban' : 'fa-check';
+        const statusText = c.isActive ? 'Tutup' : 'Buka';
+
         html += `
-             <tr class="hover:bg-red-50 transition group">
+             <tr class="hover:bg-red-50 transition group ${!c.isActive ? 'bg-gray-50' : ''}">
                 <td class="px-6 py-3 text-xs text-gray-500">#${c.id}</td>
                 <td class="px-6 py-3 font-semibold text-gray-800 line-clamp-1">${c.title}</td>
                 <td class="px-6 py-3 text-xs"><span class="bg-gray-100 text-gray-600 px-2 py-1 rounded">Donasi</span></td>
-                <td class="px-6 py-3 text-xs text-green-600 font-bold">Aktif</td>
+                <td class="px-6 py-3 text-xs ${statusClass} font-bold">${statusLabel}</td>
                 <td class="px-6 py-3 text-center whitespace-nowrap">
+                     <button onclick="toggleCampaignStatus(${c.id}, 'donation')" class="inline-flex items-center px-3 py-1.5 ${statusBtnClass} rounded-lg transition duration-200 text-xs font-bold mr-2">
+                        <i class="fas ${statusIcon} mr-1.5"></i> ${statusText}
+                    </button>
                      <button onclick="openEditCampaignModal(${c.id}, 'donation')" class="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition duration-200 text-xs font-bold mr-2">
                         <i class="fas fa-edit mr-1.5"></i> Edit
                     </button>
@@ -617,13 +686,22 @@ function renderAdminCampaignManagement() {
 
     // 2. List Relawan
     volunteerCampaigns.forEach(v => {
+        const statusLabel = v.isActive ? 'Aktif' : 'Tutup';
+        const statusClass = v.isActive ? 'text-green-600' : 'text-gray-500';
+        const statusBtnClass = v.isActive ? 'bg-orange-50 text-orange-600 hover:bg-orange-100' : 'bg-green-50 text-green-600 hover:bg-green-100';
+        const statusIcon = v.isActive ? 'fa-ban' : 'fa-check';
+        const statusText = v.isActive ? 'Tutup' : 'Buka';
+
         html += `
-             <tr class="hover:bg-red-50 transition group">
+             <tr class="hover:bg-red-50 transition group ${!v.isActive ? 'bg-gray-50' : ''}">
                 <td class="px-6 py-3 text-xs text-gray-500">#${v.id}</td>
                 <td class="px-6 py-3 font-semibold text-gray-800 line-clamp-1">${v.title}</td>
                 <td class="px-6 py-3 text-xs"><span class="bg-blue-100 text-blue-600 px-2 py-1 rounded">Relawan</span></td>
-                <td class="px-6 py-3 text-xs text-green-600 font-bold">Aktif</td>
+                <td class="px-6 py-3 text-xs ${statusClass} font-bold">${statusLabel}</td>
                 <td class="px-6 py-3 text-center whitespace-nowrap">
+                    <button onclick="toggleCampaignStatus(${v.id}, 'volunteer')" class="inline-flex items-center px-3 py-1.5 ${statusBtnClass} rounded-lg transition duration-200 text-xs font-bold mr-2">
+                        <i class="fas ${statusIcon} mr-1.5"></i> ${statusText}
+                    </button>
                     <button onclick="openEditCampaignModal(${v.id}, 'volunteer')" class="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition duration-200 text-xs font-bold mr-2">
                         <i class="fas fa-edit mr-1.5"></i> Edit
                     </button>
@@ -642,7 +720,36 @@ function renderAdminCampaignManagement() {
     tbody.innerHTML = html;
 }
 
-// --- [BARU] LOGIKA EDIT KAMPANYE ---
+// --- [BARU] FUNGSI TOGGLE STATUS KAMPANYE ---
+function toggleCampaignStatus(id, type) {
+    let item;
+    if (type === 'donation') {
+        item = campaignsData.find(c => c.id === id);
+    } else {
+        item = volunteerCampaigns.find(v => v.id === id);
+    }
+
+    if (item) {
+        // Toggle status
+        item.isActive = !item.isActive;
+        const statusText = item.isActive ? "Dibuka kembali" : "Ditutup";
+        
+        showCustomAlert(`Kampanye berhasil ${statusText}!`);
+        
+        // Refresh UI
+        renderDashboard();
+        renderHomeCampaigns();
+        renderExploreCampaigns();
+        renderVolunteerPage();
+        
+        // Jika sedang di detail page kampanye ini, refresh juga
+        if(window.location.hash.includes(`detail/${id}`)) {
+            renderDetailPage(id);
+        }
+    }
+}
+
+// --- LOGIKA EDIT KAMPANYE ---
 function openEditCampaignModal(id, type) {
     let item;
     const collectedInput = document.getElementById("edit-collected-container");
@@ -703,7 +810,7 @@ function handleUpdateCampaign(event) {
     renderVolunteerPage();
 }
 
-// --- [BARU] FUNGSI HAPUS KAMPANYE ---
+// --- FUNGSI HAPUS KAMPANYE ---
 function handleDeleteCampaign(id, type) {
     showCustomConfirm("Apakah Anda yakin ingin menghapus kampanye ini? Data yang dihapus tidak bisa dikembalikan.", (confirmed) => {
         if (confirmed) {
@@ -766,7 +873,7 @@ function renderDetailPage(id) {
   if (isFinished) {
        actionButtonHtml = `
         <button disabled class="w-full bg-gray-300 text-gray-500 font-bold py-4 rounded-xl cursor-not-allowed shadow-none">
-            Donasi Ditutup / Tercapai
+            ${!item.isActive ? 'Donasi Ditutup' : 'Target Tercapai'}
         </button>
        `;
   } else {
@@ -781,7 +888,7 @@ function renderDetailPage(id) {
         <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
             <div class="md:flex">
                 <div class="md:w-1/2 h-64 md:h-auto relative bg-gray-200">
-                      <img src="${item.image}" alt="${item.title}" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src='https://placehold.co/600x400?text=Gagal+Memuat+Gambar'" class="w-full h-full object-cover">
+                      <img src="${item.image}" alt="${item.title}" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src='https://placehold.co/600x400?text=Gagal+Memuat+Gambar'" class="w-full h-full object-cover ${!item.isActive ? 'grayscale' : ''}">
                       
                       <div class="absolute top-4 right-4 ${badgeClass} text-white px-3 py-1 rounded-lg text-sm font-bold shadow-md z-10">
                         ${badgeText}
@@ -832,7 +939,7 @@ function renderDetailPage(id) {
     `;
 }
 
-// --- [BARU] LOGIKA POPUP DONASI ---
+// --- LOGIKA POPUP DONASI ---
 let currentDonationCampaignId = null;
 
 function openDonationModal(campaignId) {
@@ -1031,6 +1138,12 @@ function registerVolunteer(campaignId) {
     const campaign = volunteerCampaigns.find(c => c.id === campaignId);
     if(!campaign) return;
 
+    // CEK STATUS AKTIF
+    if(!campaign.isActive) {
+        showCustomAlert("Maaf, pendaftaran untuk kegiatan ini sudah ditutup.");
+        return;
+    }
+
     currentVolCampaignId = campaignId;
     
     // Set Modal Content
@@ -1097,6 +1210,8 @@ function handleVolunteerSubmit(event) {
     renderDashboard();
     // Refresh admin table jika sedang dibuka di tab lain/admin
     renderAdminRelawan();
+    // Refresh page relawan untuk update progress bar
+    renderVolunteerPage();
 }
 
 // --- LOGIKA TERIMA/TOLAK RELAWAN (ADMIN) ---
@@ -1106,6 +1221,7 @@ function updateVolunteerStatus(appId, newStatus) {
         volunteerApplicants[appIndex].status = newStatus;
         renderAdminRelawan(); // Re-render table
         showCustomAlert(`Status relawan berhasil diubah menjadi: ${newStatus}`);
+        renderVolunteerPage(); // Refresh public view
     }
 }
 
