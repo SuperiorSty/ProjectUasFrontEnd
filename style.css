@@ -1,10 +1,25 @@
 /* 1. SETUP DASAR */
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
 body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
     font-family: "Inter", "Segoe UI", sans-serif;
-    overflow-x: hidden;
-    scroll-behavior: smooth;
-  }
-  
+    background-color: #f9fafb;
+}
+
+main {
+    flex: 1 0 auto; /* Memaksa main mengisi sisa layar agar footer terdorong ke bawah */
+}
+
+footer {
+    flex-shrink: 0; /* Mencegah footer menciut jika konten main terlalu banyak */
+}
+
   /* 2. SPA ROUTING SYSTEM */
   section {
     display: none;
@@ -36,111 +51,50 @@ body {
   }
   
   /* --- FOOTER STYLES --- */
-  .footer-container {
-    background-color: #ffffff;
-    width: 100%;
-  }
-  
-  .footer-content {
+  .footer-custom {
     background-color: #0f172a;
-    color: #d1d5db;
+    color: #ffffff;
     border-top-left-radius: 50px;
     border-top-right-radius: 50px;
-    padding: 4rem 1.5rem 3rem 1.5rem;
-  }
-  
-  .footer-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 3rem;
-    margin-bottom: 4rem;
-  }
-  
-  /* Responsif untuk Tablet & Desktop */
-  @media (min-width: 768px) {
-    .footer-content {
-      padding-left: 3rem;
-      padding-right: 3rem;
-    }
-    .footer-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-  
-  .footer-logo {
-    height: 4rem;
-    width: auto;
-    margin-bottom: 1rem;
-    filter: brightness(0) invert(1); /* Agar logo tetap putih di footer gelap */
-  }
-  
-  .footer-description {
-    font-size: 0.875rem;
-    line-height: 1.6;
-    max-width: 20rem;
-  }
-  
-  .footer-title {
-    color: #ffffff;
-    font-size: 0.875rem;
+    padding-top: 3rem;
+    margin-top: 4rem;
+}
+
+.footer-header {
+    font-size: 14px;
     font-weight: 700;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 1.5rem;
-  }
-  
-  .footer-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    font-size: 0.875rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-  
-  .footer-link {
-    color: #d1d5db;
-    text-decoration: none;
-    transition: color 0.3s ease;
-  }
-  
-  .footer-link:hover {
-    color: #ffffff;
-  }
-  
-  .footer-divider {
+}
+
+.footer-divider-custom {
     border: 0;
-    border-top: 1px solid #374151;
-    margin-bottom: 2rem;
-    opacity: 0.5;
-  }
-  
-  .footer-bottom {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 0.875rem;
-    gap: 1rem;
-  }
-  
-  @media (min-width: 768px) {
-    .footer-bottom {
-      flex-direction: row;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 2rem 0 1.5rem 0;
+}
+
+.social-link {
+    transition: transform 0.2s ease, opacity 0.2s;
+}
+
+.social-link:hover {
+    transform: translateY(-3px);
+    opacity: 0.8;
+}
+
+/* Logo Fixing */
+img {
+    max-width: 100%;
+}
+
+/* Responsivitas */
+@media (max-width: 768px) {
+    .footer-custom {
+        border-top-left-radius: 30px;
+        border-top-right-radius: 30px;
+        padding-top: 2rem;
     }
-  }
-  
-  .terms-link {
-    color: #d1d5db;
-    text-decoration: none;
-    text-transform: lowercase;
-    transition: color 0.3s ease;
-  }
-  
-  .terms-link:hover {
-    color: #ffffff;
-  }
+}
   
   /* Admin Action Animation */
   #admin-actions-container {
